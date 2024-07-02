@@ -4,7 +4,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const logger = require('koa-logger');
 
-const Logger = require('./helpers/logger'); // Import the custom logger
+const Logger = require('./helpers/logger'); // import the custom logger
+const PagesManager = require('./helpers/pagesManager'); // import the pages Manager
 
 Logger.log("App is starting...");
 const app = new Koa();
@@ -12,37 +13,32 @@ app.use(logger());
 Logger.log("App was started");
 
 // Route handler
+// for example: /apps/testapp/pages/usersEdit
 router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
 
   Logger.log("Routed correctly for Skep");
 
   try {
+
+    // reading from url querystring
     const appKey = ctx.params.appKey;
     const pageKey = ctx.params.pageKey;
     Logger.log("Routed correctly for appKey: " + appKey + ", " + pageKey + " pageKey");
+    
+    // read the contents of the file
+    const pagesManager = new PagesManager();
+    const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, pageKey);
 
-    const filePath = path.join(__dirname, 'apps', 'testapp', 'pages', `${pageKey}.txt`);
-    
-    // Read the contents of the file
-    const fileContent = await fs.readFile(filePath, 'utf8');
-    
-    // Parse the content to extract page_title
-    const lines = fileContent.trim().split('\n');
-    const pageDetails = {};
-    lines.forEach(line => {
-      const [key, value] = line.split(':');
-      pageDetails[key.trim()] = value.trim();
-    });
 
     // Create HTML response
     const htmlResponse = `
       <html>
         <head>
-          <title>${pageDetails['page_title']}</title>
+          <title>${pageConfig.pageTitle}</title>
         </head>
         <body>
-          <h1>${pageDetails['page_title']}</h1>
-          <p>Menu text: ${pageDetails['menu_text']}</p>
+          <h1>${pageConfig.pageTitle}</h1>
+          ${pageConfig.content}
         </body>
       </html>
     `;
