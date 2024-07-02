@@ -6,6 +6,7 @@ const logger = require('koa-logger');
 
 const Logger = require('./helpers/logger'); // import the custom logger
 const PagesManager = require('./helpers/pagesManager'); // import the pages Manager
+const PagesContentManager = require('./helpers/pagesContentManager'); // import the pages Manager
 
 Logger.log("App is starting...");
 const app = new Koa();
@@ -29,8 +30,12 @@ router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
     const pagesManager = new PagesManager();
     const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, pageKey);
 
-    const skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);
-    skeletonContent.replace('[[[content]]]', pageConfig.content);
+    let skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);
+
+    const pagesContentManager = new PagesContentManager();
+    const renderedContentHtml = pagesContentManager.FromPageConfigToContent(pageConfig.content);
+
+    skeletonContent = skeletonContent.replace('[[[content]]]', renderedContentHtml);
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;
