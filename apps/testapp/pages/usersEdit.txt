@@ -1,0 +1,2 @@
+page_title:Create / Edit User
+menu_text:Users
