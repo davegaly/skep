@@ -39,6 +39,7 @@ router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;
+    
   } catch (err) {
     // Handle errors, e.g., file not found
     console.log(`[${new Date().toISOString()}] Error ` + err);

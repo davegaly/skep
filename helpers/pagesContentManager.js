@@ -8,27 +8,52 @@ class PagesContentManager {
     // iterate all lines of the content
     pageContent.split('\n').forEach(line => {
       let currentLineContent = line.trim();
-      console.log(currentLineContent);
-      switch(currentLineContent) {
-        case 'row': htmlContent += this.RenderGridRow(); break;
-        case 'col-6': htmlContent += this.RenderGridCol(); break;
-        case '/': htmlContent += this.RenderCloseDiv(); break;
-        default: htmlContent += currentLineContent; break;
-      }
+      console.log(currentLineContent);      
+      
+      if (currentLineContent == 'row') { htmlContent += this.RenderGridRow(); }
+      else if (currentLineContent == 'col-6') { htmlContent += this.RenderGridCol(6); }
+      else if (currentLineContent == 'col-12') { htmlContent += this.RenderGridCol(12); }
+      else if (currentLineContent == '/') { htmlContent += this.RenderCloseDiv(); }
+      else if (currentLineContent.startsWith('txt')) { htmlContent += this.RenderTextbox(currentLineContent); }
+      else if (currentLineContent.startsWith('btn')) { htmlContent += this.RenderButton(currentLineContent); }
+      else { htmlContent += currentLineContent; }
 
     });
 
     return htmlContent;
   }
 
-  RenderGridCol() {
-    return "<div class='col-md-6'>";
+  RenderGridCol(width) {
+    return "<div class='col-md-" + width + "'>";
   }
   RenderGridRow() {
     return "<div class='row'>";
   }
+
+  RenderTextbox(currentLineContent) {
+    // txt-username-labelText
+    const label = currentLineContent.split('-')[2];
+    const id = currentLineContent.split('-')[1];
+    let lbl = "<label id='lbl" + this.CapitalizeFirstLetter(id) + "'>" + label + "</label>";
+    let txt = "<input type='text' id='txt" + this.CapitalizeFirstLetter(id) + "' class='form-control' />";
+    return lbl + txt;
+  }  
+
+  RenderButton(currentLineContent) {
+    // btn-save-buttonText
+    const buttonText = currentLineContent.split('-')[2];
+    const id = currentLineContent.split('-')[1];
+    let btn = "<button id='btn" + this.CapitalizeFirstLetter(id) + "' class='btn btn-primary'>" + buttonText + "</button>";
+    return btn;
+  }    
+
   RenderCloseDiv() {
     return "</div>";
+  }
+
+  CapitalizeFirstLetter(str) {
+    if (!str) return str;  // Check for empty string
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
 }
