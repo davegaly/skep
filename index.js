@@ -2,24 +2,26 @@ const Koa = require('koa');
 const router = require('@koa/router')();
 const fs = require('fs').promises;
 const path = require('path');
+const logger = require('koa-logger');
 
-const Logger = require('./logger'); // Import the custom logger
+const Logger = require('./helpers/logger'); // Import the custom logger
 
 Logger.log("App is starting...");
 const app = new Koa();
+app.use(logger());
 Logger.log("App was started");
 
 // Route handler
-router.get('/apps/testapp/pages/:txtfilename', async (ctx) => {
-  
+router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
+
   Logger.log("Routed correctly for Skep");
 
   try {
-    const txtFilename = ctx.params.txtfilename;
+    const appKey = ctx.params.appKey;
+    const pageKey = ctx.params.pageKey;
+    Logger.log("Routed correctly for appKey: " + appKey + ", " + pageKey + " pageKey");
 
-    console.log(`[${new Date().toISOString()}] ` + txtFilename);
-
-    const filePath = path.join(__dirname, 'apps', 'testapp', 'pages', `${txtFilename}.txt`);
+    const filePath = path.join(__dirname, 'apps', 'testapp', 'pages', `${pageKey}.txt`);
     
     // Read the contents of the file
     const fileContent = await fs.readFile(filePath, 'utf8');
