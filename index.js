@@ -29,22 +29,11 @@ router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
     const pagesManager = new PagesManager();
     const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, pageKey);
 
+    const skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);
+    skeletonContent.replace('[[[content]]]', pageConfig.content);
 
-    // Create HTML response
-    const htmlResponse = `
-      <html>
-        <head>
-          <title>${pageConfig.pageTitle}</title>
-        </head>
-        <body>
-          <h1>${pageConfig.pageTitle}</h1>
-          ${pageConfig.content}
-        </body>
-      </html>
-    `;
-    
     ctx.type = 'text/html';
-    ctx.body = htmlResponse;
+    ctx.body = skeletonContent;
   } catch (err) {
     // Handle errors, e.g., file not found
     console.log(`[${new Date().toISOString()}] Error ` + err);
