@@ -16,7 +16,7 @@ Logger.log("App was started");
 
 router.get('/apps/:appKey/pagesjs/:pageKey', async (ctx) => {
 
-  Logger.log("Routed correctly for Skep Page js");
+  Logger.log("Routed correctly for Skep Page js");  
 
 });
 
