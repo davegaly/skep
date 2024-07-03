@@ -1,1 +1,1 @@
-alert('ca');
+console.log('caxx');
