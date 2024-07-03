@@ -15,7 +15,7 @@ class PagesManager {
     const filePath = path.join(__dirname, '../apps', appKey, 'pages', pageKey + '.config');
     const fileContent = await fs.readFile(filePath, 'utf8');    
     return this.ParseConfigFileContent(fileContent);
-  }  
+  }   
 
   // parses the config file content into an object
   ParseConfigFileContent(fileContent) {
