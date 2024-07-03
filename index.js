@@ -13,17 +13,26 @@ const app = new Koa();
 app.use(logger());
 Logger.log("App was started");
 
-// Route handler
+
+router.get('/apps/:appKey/pagesjs/:pageKey', async (ctx) => {
+
+  Logger.log("Routed correctly for Skep Page js");
+
+});
+
+// Route handler: PAGES
 // for example: /apps/testapp/pages/usersEdit
 router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
 
-  Logger.log("Routed correctly for Skep");
+  Logger.log("Routed correctly for Skep Page");
 
   try {
 
     // reading from url querystring
     const appKey = ctx.params.appKey;
     const pageKey = ctx.params.pageKey;
+    const host = ctx.host;
+    const url = ctx.url;
     Logger.log("Routed correctly for appKey: " + appKey + ", " + pageKey + " pageKey");
     
     // read the contents of the file
@@ -36,6 +45,7 @@ router.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
     const renderedContentHtml = pagesContentManager.FromPageConfigToContent(pageConfig.content);
 
     skeletonContent = skeletonContent.replace('[[[content]]]', renderedContentHtml);
+    skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', host + url +  )
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;
