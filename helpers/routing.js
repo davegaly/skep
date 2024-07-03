@@ -6,23 +6,32 @@ const Logger = require('./logger'); // import the custom logger
 const PagesManager = require('./pagesManager'); // import the pages Manager
 const PagesContentManager = require('./pagesContentManager'); // import the pages Manager
 
-const stackblitzServerUrl = "https://skep-dtfm--3000--70dbe416.local-credentialless.webcontainer.io/";
-
 const basicRouting = new Router();
 
+// this route serves the .js file specific for a page:
+// example: https://.../apps/testapp/pagesjs/usersEdit
 basicRouting.get('/apps/:appKey/pagesjs/:pageKey', async (ctx) => {
 
+  Logger.log("Routed correctly for Skep Page js");  
   const appKey = ctx.params.appKey;
   const pageKey = ctx.params.pageKey;
-  Logger.log("Routed correctly for Skep Page js");  
-  const filePath = path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js');
-  const fileContent = await fs.readFile(filePath, 'utf8');    
-  ctx.type = 'text/js';
-  ctx.body = fileContent;
-  return fileContent;
+
+  try {
+    const filePath = path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js');
+    await fs.access(filePath, fs.constants.F_OK);
+    const fileContent = await fs.readFile(filePath, 'utf8');    
+    ctx.type = 'text/javascript';
+    ctx.body = fileContent;
+  } catch (error) {
+    ctx.status = 404;
+    ctx.body = '';
+    Logger.error("Page js not found for " + path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js'));  
+  }
 
 });
 
+// this route serves the specific page itself
+// example: https://.../apps/testapp/pages/usersEdit
 basicRouting.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
 
   Logger.log("Routed correctly for Skep Page");
@@ -32,28 +41,30 @@ basicRouting.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
     // reading from url querystring
     const appKey = ctx.params.appKey;
     const pageKey = ctx.params.pageKey;
-    const host = ctx.host;
-    const url = ctx.url;
     Logger.log("Routed for appKey: " + appKey + ", " + pageKey + " pageKey");
     
-    // read the contents of the file
+    // read the page configuration from the .config file
     const pagesManager = new PagesManager();
     const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, pageKey);
 
+    // gets the scheleton, according to the config
     let skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);
 
+    // transform the configuration into html content
     const pagesContentManager = new PagesContentManager();
     const renderedContentHtml = pagesContentManager.FromPageConfigToContent(pageConfig.content);
-
     skeletonContent = skeletonContent.replace('[[[content]]]', renderedContentHtml);
-    skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', stackblitzServerUrl + "apps/" + appKey + "/pagesjs/" + pageKey)
+
+    // manages the link to the specific page js file
+    const stackBlitzBaseURL = process.env["STACKBLITZ_BASE_URL"];
+    skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', stackBlitzBaseURL + "apps/" + appKey + "/pagesjs/" + pageKey)
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;
     
   } catch (err) {
     // Handle errors, e.g., file not found
-    console.log(`[${new Date().toISOString()}] Error ` + err);
+    Logger.error(err);
     ctx.status = 404;
     ctx.body = 'Page not found';
   }
