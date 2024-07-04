@@ -25,6 +25,12 @@ if (settingsServerENV != "dev" && settingsServerENV != "prod") {
   Logger.error("SERVER_ENV must be 'dev' or 'prod'. Shutting down...");
   return;
 }
+const settingsAppKeyENV = process.env["APP_KEY"];
+Logger.log("APP_KEY: " + settingsAppKeyENV);
+if (settingsAppKeyENV == undefined || settingsAppKeyENV == null || settingsAppKeyENV == '') {
+  Logger.error("Could not retrieve APP_KEY in .env file. Shutting down...");
+  return;
+}
 
 
 // middlewares here
