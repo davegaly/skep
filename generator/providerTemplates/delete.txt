@@ -1,0 +1,22 @@
+// logic delete
+async function ##functionName##(params, callback) {
+    console.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+    const db = new sqlite3.Database(sharedDBMethods.returnDBPath(), (error) => {
+        if (error) {return console.error(error.message);}
+        if (params.id > 0) {
+            db.serialize(() => {
+                console.log("##tableName##Provider->##functionName##(logic delete) Started");
+                db.prepare(`UPDATE ##tableName## SET isDeleted=1 WHERE id=?`, [params.id]).run(
+                    err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    }
+                    ).finalize(err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    });
+                db.close();
+                console.log("##tableName##Provider->##functionName##(logic delete) Finished");
+                callback(null, "ok");
+            });
+        }
+    });
+}

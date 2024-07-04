@@ -3,3 +3,5 @@ db-migrate db:create dummyDbNameNotNeeded -e prod
 
 db-migrate create --migrations-dir apps/testapp/db/migrations init
 db-migrate up --migrations-dir apps/testapp/db/migrations -e dev
+
+node generator.js

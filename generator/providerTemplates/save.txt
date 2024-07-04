@@ -1,0 +1,40 @@
+// save
+async function ##functionName##(params, callback) {
+    console.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+    const db = new sqlite3.Database(sharedDBMethods.returnDBPath(), (error) => {
+        if (error) {return console.error(error.message);}
+        if (params.id > 0) {
+            db.serialize(() => {
+                console.log("##tableName##Provider->##functionName##(update) Started");
+                db.prepare(`UPDATE ##tableName## SET ##listUpdateFieldsSQL## WHERE id=?`, ##listUpdateFieldsArray##).run(
+                    err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    }
+                    ).finalize(err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    });
+                db.close();
+                console.log("##tableName##Provider->##functionName##(update) Finished");
+                callback(null, "ok");
+            });
+        }
+        else
+        {
+            db.serialize(() => {
+                console.log("##tableName##Provider->##functionName##(insert) Started");
+                const uniqueUUID = uuid.v4();
+                console.log("##tableName##Provider->##functionName## Generated guid for new record: " + uniqueUUID);
+                db.prepare(`INSERT INTO ##tableName## (##listInsertFieldsSQL##,guid,isDeleted) VALUES (##listInsertFieldsValues##,?,?)`, [##listInsertFieldsArray##,uniqueUUID,0]).run(
+                    err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    }
+                    ).finalize(err => {
+                        if (err != null) { db.close(); console.log(err.message) };
+                    });
+                db.close();
+                console.log("##tableName##Provider->##functionName##(insert) Finished");
+                callback(null, "ok");
+            });            
+        }
+    });
+}
