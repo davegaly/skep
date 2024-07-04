@@ -4,14 +4,16 @@ const path = require('path');
 class PagesManager {
 
   // retrieves an app html skeleton by its key 
-  async GetSkeleton(appKey, skeletonKey) {
+  async GetSkeleton(skeletonKey) {
+    const appKey = process.env["APP_KEY"];
     const filePath = path.join(__dirname, '../apps', appKey, 'pages', skeletonKey + '.skeleton.html');
     const fileContent = await fs.readFile(filePath, 'utf8');    
     return fileContent;
   } 
 
   // retrieves the .txt config files by app key and page key
-  async GetPageConfigByAppKeyAndPageKey(appKey, pageKey) {
+  async GetPageConfigByAppKeyAndPageKey(pageKey) {
+    const appKey = process.env["APP_KEY"];
     const filePath = path.join(__dirname, '../apps', appKey, 'pages', pageKey + '.config');
     const fileContent = await fs.readFile(filePath, 'utf8');    
     return this.ParseConfigFileContent(fileContent);

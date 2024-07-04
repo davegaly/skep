@@ -10,10 +10,10 @@ const basicRouting = new Router();
 
 // this route serves the .js file specific for a page:
 // example: https://.../apps/testapp/pagesjs/usersEdit
-basicRouting.get('/apps/:appKey/pagesjs/:pageKey', async (ctx) => {
+basicRouting.get('/pagesjs/:pageKey', async (ctx) => {
 
   Logger.log("Routed correctly for Skep Page js");  
-  const appKey = ctx.params.appKey;
+  const appKey = process.env["APP_KEY"];
   const pageKey = ctx.params.pageKey;
 
   try {
@@ -32,14 +32,14 @@ basicRouting.get('/apps/:appKey/pagesjs/:pageKey', async (ctx) => {
 
 // this route serves the specific page itself
 // example: https://.../apps/testapp/pages/usersEdit
-basicRouting.get('/apps/:appKey/pages/:pageKey', async (ctx) => {
+basicRouting.get('/pages/:pageKey', async (ctx) => {
 
   Logger.log("Routed correctly for Skep Page");
 
   try {
 
     // reading from url querystring
-    const appKey = ctx.params.appKey;
+    const appKey = process.env["APP_KEY"];
     const pageKey = ctx.params.pageKey;
     Logger.log("Routed for appKey: " + appKey + ", " + pageKey + " pageKey");
     
