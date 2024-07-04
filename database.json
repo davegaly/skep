@@ -1,0 +1,13 @@
+{
+    "defaultEnv": {"ENV": "SERVER_ENV"},
+
+    "dev": {
+        "driver": "sqlite3",
+        "filename": {"ENV": "MIGRATE_DB_PATH_DEV"}
+    },
+
+    "prod": {
+        "driver": "sqlite3",
+        "filename": {"ENV": "MIGRATE_DB_PATH_PROD"}
+    }
+}

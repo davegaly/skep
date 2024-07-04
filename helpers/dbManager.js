@@ -1,3 +1,4 @@
+
 // returns the path to the database file, according to the SERVER_ENV and APP_KEY in the .env file
 function ReturnDBPath() {
     
@@ -15,7 +16,7 @@ function ReturnDBPath() {
 
 // adds column system fields
 function AddSystemFields(createTableObject) {
-   
+
     createTableObject.guid = 'uuid';
     createTableObject.isDeleted = 'int';
     createTableObject.createdDate = 'string';
@@ -26,4 +27,4 @@ function AddSystemFields(createTableObject) {
     return createTableObject;
 }
 
-module.exports = { ReturnDBPath, AddSystemFields }
+module.exports = {ReturnDBPath, AddSystemFields};
