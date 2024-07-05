@@ -45,4 +45,9 @@ app.use(basicRouting.routes());
 // all good
 Logger.log("App was started correctly");
 
+
+// test area
+const aaa = require('./apps/testapp/db/providers/departmentsProvider');
+aaa.getIdByGuid("asdasd");
+
 app.listen(3000);

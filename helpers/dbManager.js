@@ -6,11 +6,11 @@ function ReturnDBPath() {
     const appKey = process.env['APP_KEY'];
 
     if (serverENV == 'dev') {
-        return "./apps/" + appKey + "db/dev.sqlite";
+        return "./apps/" + appKey + "/db/dev.db";
     }
 
     if (serverENV == 'prod') {
-        return "./apps/" + appKey + "db/prod.sqlite";
+        return "./apps/" + appKey + "/db/prod.db";
     }
 }
 

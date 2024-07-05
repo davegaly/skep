@@ -1,5 +1,5 @@
 async function ##functionName##(params, callback) {
-    const db = new sqlite3.Database(sharedDBMethods.returnDBPath(), (error) => {
+    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
         if (error) {return console.log(error.message);}
         db.serialize(() => {
             let result = [];

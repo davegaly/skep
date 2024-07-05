@@ -47,7 +47,7 @@ function workTemplateValues() {
         contentTemplateSkeletonProvider = contentTemplateSkeletonProvider.replaceAll("##tableName##", structureCurrentTableObject.tableName);
         
         // writes provider file
-        fs.writeFileSync("./db/providers/" + structureCurrentTableObject.tableName + "Provider.js", contentTemplateSkeletonProvider);
+        fs.writeFileSync("./../apps/testapp/db/providers/" + structureCurrentTableObject.tableName + "Provider.js", contentTemplateSkeletonProvider);
         console.log(structureCurrentTableObject.tableName + "Provider.js" + " written - Prodiver file DONE!");
 
     })

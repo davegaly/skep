@@ -1,0 +1,13 @@
+const Router = require('@koa/router');
+const ##tableName##Provider = require('../db/providers/##tableName##Provider.js');
+const ##tableName##Business  = require('../business/##tableName##Business.js');
+const authBusiness  = require('../business/authBusiness.js');
+
+// Prefix all routes with: /items
+const ##tableName##Router = new Router({
+  prefix: '/api/##tableName##',
+});
+
+##apiContent##
+
+module.exports = ##tableName##Router;

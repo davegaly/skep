@@ -1,7 +1,7 @@
 // save
 async function ##functionName##(params, callback) {
     console.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
-    const db = new sqlite3.Database(sharedDBMethods.returnDBPath(), (error) => {
+    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
         if (error) {return console.error(error.message);}
         if (params.id > 0) {
             db.serialize(() => {
