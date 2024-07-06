@@ -1,19 +1,20 @@
 async function ##functionName##(params, callback) {
+    logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
     const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-        if (error) {return console.log(error.message);}
+        if (error) {return logger.log(error.message);}
         db.serialize(() => {
             let result = {};
-            console.log("##tableName##Provider->##functionName## Started with params: " + JSON.stringify(params));
+            logger.log("##tableName##Provider->##functionName## Started with params: " + JSON.stringify(params));
             db.each(`SELECT ##selectFields## FROM ##selectFrom## ##whereString##`, [##whereParams##], (error, row) => {
-                if (error) {return console.log(error);}
+                if (error) {return logger.log(error);}
                 let recordToReturn = 
 ##FieldsAsObject##                
                 result = recordToReturn;
             },
             function() {
-                console.log("##tableName##Provider->##functionName## Finished (callback)");
-                console.log("##tableName##Provider->##functionName## this is the result: " + JSON.stringify(result));
-                callback(null, result);
+                logger.log("##tableName##Provider->##functionName## Finished (callback)");
+                logger.log("##tableName##Provider->##functionName## this is the result: " + JSON.stringify(result));
+                if (callback != null) callback(null, result);
             });
         });
     });

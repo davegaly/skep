@@ -47,7 +47,9 @@ Logger.log("App was started correctly");
 
 
 // test area
-const aaa = require('./apps/testapp/db/providers/departmentsProvider');
-aaa.getIdByGuid("asdasd");
+//const aaa = require('./apps/testapp/db/providers/departmentsProvider');
+//aaa.getIdByGuid("8861f886-dff1-4faa-af14-937eefa820a4");
+//aaa.listAll();
+
 
 app.listen(3000);
