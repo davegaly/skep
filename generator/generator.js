@@ -90,6 +90,81 @@ function workTemplateSingleProvider() {
     return contentProviderFile;
 }
 
+// 3.1 - creating a api file for each table in the structure.json
+function workTemplateForAPI() {
+
+    // iterate tables in the structure
+    Object.keys(structureObject.tables).forEach(tableIndex => {
+        
+        structureCurrentTableObject = structureObject.tables[tableIndex];
+        console.log("Working on api file for table: " + structureCurrentTableObject.tableName);
+
+        let contentTemplateSkeletonAPI = fs.readFileSync(fileTemplateApi, 'utf8');
+        console.log("templateAPI skeleton read succesfully!"); 
+
+        console.log("Begin create api content");
+        contentTemplateSkeletonAPI = workTemplateSingleAPI(contentTemplateSkeletonAPI);
+        console.log("Finished create api content");
+
+        // common substitutions
+        contentTemplateSkeletonAPI = contentTemplateSkeletonAPI.replaceAll("##tableName##", structureCurrentTableObject.tableName);
+
+        // requires
+        /*
+        let contentForRequirePlaceholder = '';
+        if (structureCurrentTableObject.apiRequires != null) {
+            for (let i = 0; i < structureCurrentTableObject.apiRequires.length; i++) {
+                const requireElement = structureCurrentTableObject.apiRequires[i];
+                let thisRequireContent = "const " + requireElement.variableName + " = require('" + requireElement.requirePath + "');";
+                //const teamsBusiness = require('../business/teamsBusiness.js');
+                contentForRequirePlaceholder += thisRequireContent + "\n";
+            }
+        }
+        contentTemplateSkeletonAPI = contentTemplateSkeletonAPI.replaceAll("##requires##", contentForRequirePlaceholder);
+        */
+        
+        // writes api file
+        fs.writeFileSync("./../apps/testapp/api/" + structureCurrentTableObject.tableName + "API.js", contentTemplateSkeletonAPI);
+        console.log(structureCurrentTableObject.tableName + "API.js" + " written - API file DONE!");
+
+    })
+
+    console.log("ALL API FILES DONE!");
+}
+workTemplateForAPI();
+function workTemplateSingleAPI(contentTemplateSkeletonAPI) {
+    
+    let singleApiCode = '';
+    for (let i = 0; i < structureCurrentTableObject.api.length; i++) {
+        const apiObject = structureCurrentTableObject.api[i];
+        let templateAPIFile = './apiTemplates/' + apiObject.type  + '.txt';
+        let singleApiSpecificTemplateContent = fs.readFileSync(templateAPIFile, 'utf8');
+
+        singleApiSpecificTemplateContent = singleApiSpecificTemplateContent.replaceAll("##apiName##", apiObject.name);
+        if (apiObject.extendedUrl == null || apiObject.extendedUrl == undefined) {
+            singleApiSpecificTemplateContent = singleApiSpecificTemplateContent.replaceAll("##extendedUrl##", '');
+        }
+        else
+        {
+            singleApiSpecificTemplateContent = singleApiSpecificTemplateContent.replaceAll("##extendedUrl##", apiObject.extendedUrl);
+        }
+        
+        singleApiSpecificTemplateContent = singleApiSpecificTemplateContent.replaceAll("##dbProviderMethodName##", apiObject.dbProviderMethodName);
+        
+        singleApiCode += "\n\n" + singleApiSpecificTemplateContent;
+    }
+    contentTemplateSkeletonAPI = contentTemplateSkeletonAPI.replaceAll("##apiContent##", singleApiCode);
+
+    let fieldsParamsBodySave = '';
+    fieldsParamsBodySave = 'id: ctx.request.body.id'
+    Object.keys(structureCurrentTableObject.fields).forEach(fieldIndex => {
+        let fieldProperties = structureCurrentTableObject.fields[fieldIndex];
+        fieldsParamsBodySave += ', ' + fieldProperties.fieldName + ": ctx.request.body." + fieldProperties.fieldName;
+    });
+    contentTemplateSkeletonAPI =  contentTemplateSkeletonAPI.replaceAll("##listParamsBodySave##", fieldsParamsBodySave); 
+ 
+    return contentTemplateSkeletonAPI;
+}
 
 console.log("Generator All Good!"); 
 

@@ -1,0 +1,15 @@
+// ##apiName##
+##tableName##Router.post('/##apiName##', authBusiness.authCheckCredentials, async (ctx, next) => {
+  await new Promise(async (resolve, reject) => {    
+    if (##tableName##Business.##apiName##AdjustInputCtx !== undefined) {
+      await ##tableName##Business.##apiName##AdjustInputCtx(ctx);
+    }
+    let params = {##listParamsBodySave##};
+    console.log("##tableName##API->##apiName##(" + JSON.stringify(params) + ") Started");
+    ##tableName##Provider.##dbProviderMethodName##(params, function(err,result) {
+      ctx.body = result;
+      console.log("##tableName##API->##apiName## finished");
+      resolve();
+    });    
+  });  
+});

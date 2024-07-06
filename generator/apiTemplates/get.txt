@@ -1,0 +1,11 @@
+// ##apiName##
+##tableName##Router.get('/##apiName####extendedUrl##', authBusiness.authCheckCredentials, async (ctx, next) => {
+  await new Promise((resolve, reject) => {
+    console.log("##tableName##API->##apiName##, with params " + JSON.stringify(ctx.params) + " Started");
+    ##tableName##Provider.##dbProviderMethodName##(ctx.params.id, function(err,result) {
+      ctx.body = result;
+      console.log("##tableName##API->##apiName## finished");
+      resolve();
+    });    
+  }); 
+});

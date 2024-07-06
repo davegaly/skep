@@ -2,6 +2,8 @@ require("dotenv").config();
 const Koa = require('koa');
 const router = require('@koa/router')();
 const logger = require('koa-logger');
+const fs = require("fs");
+const path = require('path');
 
 const Logger = require('./helpers/logger');
 
@@ -38,9 +40,25 @@ app.use(logger());
 
 
 // adding routes
+Logger.log("Adding basic routes");
 let basicRouting = require("./helpers/routing.js");
 app.use(basicRouting.routes());
+Logger.log("Done!");
 
+// routes from api files
+const apiFolderForApp = "./apps/" + settingsAppKeyENV + "/api/";
+Logger.log("Adding api app routes in " + apiFolderForApp);
+const filesAPI = fs.readdirSync(apiFolderForApp);
+filesAPI.forEach(file => {
+  const filePath = path.join(apiFolderForApp, file);
+  Logger.log("Adding routes for " + file);
+  let thisFileApiRequire = require("./" + filePath);
+  app.use(thisFileApiRequire.routes());
+});
+
+//let departmentsAPI = require("./api/departmentsAPI.js");
+//app.use(departmentsAPI.routes());
+Logger.log("Done!");
 
 // all good
 Logger.log("App was started correctly");
