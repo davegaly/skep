@@ -17,16 +17,34 @@ basicRouting.get('/pagesjs/:pageKey', async (ctx) => {
   const appKey = process.env["APP_KEY"];
   const pageKey = ctx.params.pageKey;
 
-  try {
-    const filePath = path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js');
-    await fs.access(filePath, fs.constants.F_OK);
-    const fileContent = await fs.readFile(filePath, 'utf8');    
-    ctx.type = 'text/javascript';
-    ctx.body = fileContent;
-  } catch (error) {
-    ctx.status = 404;
-    ctx.body = '';
-    Logger.error("Page js not found for " + path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js'));  
+  if (pageKey == "shareduiclientfunctions") {
+    // he called for the shared functions file
+    try {
+      const filePath = path.join(__dirname, '/../apps/_shared/uiClientFunctions.js');
+      await fs.access(filePath, fs.constants.F_OK);
+      const fileContent = await fs.readFile(filePath, 'utf8');    
+      ctx.type = 'text/javascript';
+      ctx.body = fileContent;
+    } catch (error) {
+      ctx.status = 404;
+      ctx.body = '';
+      Logger.error("Shared js functions not found for " + path.join(__dirname, '/../apps/_shared/uiclientfunctions.js'));  
+    }
+  }
+  else
+  {
+    // he called for a specific .js for a page
+    try {
+      const filePath = path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js');
+      await fs.access(filePath, fs.constants.F_OK);
+      const fileContent = await fs.readFile(filePath, 'utf8');    
+      ctx.type = 'text/javascript';
+      ctx.body = fileContent;
+    } catch (error) {
+      ctx.status = 404;
+      ctx.body = '';
+      Logger.error("Page js not found for " + path.join(__dirname, '/../apps', appKey, 'pages', pageKey + '.js'));  
+    }
   }
 
 });
@@ -60,6 +78,7 @@ basicRouting.get('/pages/:pageKey', async (ctx) => {
     // manages the link to the specific page js file
     const stackBlitzBaseURL = process.env["STACKBLITZ_BASE_URL"];
     skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', stackBlitzBaseURL + "pagesjs/" + pageKey)
+    skeletonContent = skeletonContent.replace('[[[client_functions_js_src]]]', stackBlitzBaseURL + "pagesjs/shareduiclientfunctions")
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;
@@ -70,6 +89,25 @@ basicRouting.get('/pages/:pageKey', async (ctx) => {
     ctx.status = 404;
     ctx.body = 'Page not found';
   }
+});
+
+// this route serves the apps/shared/uiclientfunctions.js file 
+basicRouting.get('/shareduiclientfunctions', async (ctx) => {
+
+  const appKey = process.env["APP_KEY"];
+
+  try {
+    const filePath = path.join(__dirname, '/../apps/_shared/uiclientfunctions.js');
+    await fs.access(filePath, fs.constants.F_OK);
+    const fileContent = await fs.readFile(filePath, 'utf8');    
+    ctx.type = 'text/javascript';
+    ctx.body = fileContent;
+  } catch (error) {
+    ctx.status = 404;
+    ctx.body = '';
+    Logger.error("Shared js functions not found for " + path.join(__dirname, '/../apps/_shared/uiclientfunctions.js'));  
+  }
+
 });
 
 module.exports = basicRouting;  

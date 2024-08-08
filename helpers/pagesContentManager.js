@@ -42,7 +42,8 @@ class PagesContentManager {
     // btn-save-buttonText
     const buttonText = currentLineContent.split('-')[2];
     const id = currentLineContent.split('-')[1];
-    let btn = "<button id='btn" + this.CapitalizeFirstLetter(id) + "' class='btn btn-primary'>" + buttonText + "</button>";
+    const fullId = 'btn' + this.CapitalizeFirstLetter(id);
+    let btn = "<button id='" + fullId + "' onclick='" + fullId + "OnClick();' class='btn btn-primary'>" + buttonText + "</button>";
     return btn;
   }    
 

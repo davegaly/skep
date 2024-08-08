@@ -1,0 +1,3 @@
+function btnCreateOnClick() {
+    skepUIGoToPage("departmentsEdit");
+}
