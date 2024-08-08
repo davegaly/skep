@@ -7,8 +7,7 @@ class PagesContentManager {
 
     // iterate all lines of the content
     pageContent.split('\n').forEach(line => {
-      let currentLineContent = line.trim();
-      console.log(currentLineContent);      
+      let currentLineContent = line.trim();   
       
       if (currentLineContent == 'row') { htmlContent += this.RenderGridRow(); }
       else if (currentLineContent == 'col-6') { htmlContent += this.RenderGridCol(6); }

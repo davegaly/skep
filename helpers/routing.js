@@ -13,6 +13,7 @@ const basicRouting = new Router();
 basicRouting.get('/pagesjs/:pageKey', async (ctx) => {
 
   Logger.log("Routed correctly for Skep Page js");  
+
   const appKey = process.env["APP_KEY"];
   const pageKey = ctx.params.pageKey;
 
@@ -45,11 +46,11 @@ basicRouting.get('/pages/:pageKey', async (ctx) => {
     
     // read the page configuration from the .config file
     const pagesManager = new PagesManager();
-    const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, "usersEdit");
+    const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(pageKey);
     Logger.log("Page config read succesfully");
 
     // gets the scheleton, according to the config
-    let skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);
+    let skeletonContent = await pagesManager.GetSkeleton(pageConfig.skeleton);
 
     // transform the configuration into html content
     const pagesContentManager = new PagesContentManager();
@@ -58,7 +59,7 @@ basicRouting.get('/pages/:pageKey', async (ctx) => {
 
     // manages the link to the specific page js file
     const stackBlitzBaseURL = process.env["STACKBLITZ_BASE_URL"];
-    skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', stackBlitzBaseURL + "apps/" + appKey + "/pagesjs/" + pageKey)
+    skeletonContent = skeletonContent.replace('[[[page_script_js_src]]]', stackBlitzBaseURL + "pagesjs/" + pageKey)
 
     ctx.type = 'text/html';
     ctx.body = skeletonContent;

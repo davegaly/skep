@@ -13,10 +13,9 @@ class PagesManager {
   } 
 
   // retrieves the .txt config files by app key and page key
-  async GetPageConfigByAppKeyAndPageKey(pageKeyToLoad) {
+  async GetPageConfigByAppKeyAndPageKey(pageKey) {
     const appKey = process.env["APP_KEY"];
-    Logger.log("GetPageConfigByAppKeyAndPageKey pageKey: " + pageKeyToLoad);
-    const filePath = path.join(__dirname, '../apps', appKey, 'pages', "usersEdit" + '.config');
+    const filePath = path.join(__dirname, '../apps', appKey, 'pages', pageKey + '.config');
     const fileContent = await fs.readFile(filePath, 'utf8');    
     return this.ParseConfigFileContent(fileContent);
   }   

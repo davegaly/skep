@@ -1,1 +1,1 @@
-console.log('caxx');
+alert('caxx');
