@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const Logger = require('./logger'); // import the custom logger
 
 class PagesManager {
 
@@ -12,9 +13,10 @@ class PagesManager {
   } 
 
   // retrieves the .txt config files by app key and page key
-  async GetPageConfigByAppKeyAndPageKey(pageKey) {
+  async GetPageConfigByAppKeyAndPageKey(pageKeyToLoad) {
     const appKey = process.env["APP_KEY"];
-    const filePath = path.join(__dirname, '../apps', appKey, 'pages', pageKey + '.config');
+    Logger.log("GetPageConfigByAppKeyAndPageKey pageKey: " + pageKeyToLoad);
+    const filePath = path.join(__dirname, '../apps', appKey, 'pages', "usersEdit" + '.config');
     const fileContent = await fs.readFile(filePath, 'utf8');    
     return this.ParseConfigFileContent(fileContent);
   }   

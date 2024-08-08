@@ -1,22 +1,28 @@
 // logic delete
 async function ##functionName##(params, callback) {
-    logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
-    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-        if (error) {return logger.error(error.message);}
-        if (params.id > 0) {
-            db.serialize(() => {
-                logger.log("##tableName##Provider->##functionName##(logic delete) Started");
-                db.prepare(`UPDATE ##tableName## SET isDeleted=1 WHERE id=?`, [params.id]).run(
-                    err => {
-                        if (err != null) { db.close(); logger.log(err.message) };
-                    }
-                    ).finalize(err => {
-                        if (err != null) { db.close(); logger.log(err.message) };
-                    });
-                db.close();
-                logger.log("##tableName##Provider->##functionName##(logic delete) Finished");
-                if (callback != null) callback(null, "ok");
-            });
-        }
+    return new Promise((resolve, reject) => {
+        logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
+            if (error) {
+                return logger.error(error.message);
+                reject(null);
+            }
+            if (params.id > 0) {
+                db.serialize(() => {
+                    logger.log("##tableName##Provider->##functionName##(logic delete) Started");
+                    db.prepare(`UPDATE ##tableName## SET isDeleted=1 WHERE id=?`, [params.id]).run(
+                        err => {
+                            if (err != null) { db.close(); logger.log(err.message) };
+                        }
+                        ).finalize(err => {
+                            if (err != null) { db.close(); logger.log(err.message) };
+                        });
+                    db.close();
+                    logger.log("##tableName##Provider->##functionName##(logic delete) Finished");
+                    if (callback != null) callback(null, "ok");
+                });
+            }
+            resolve(null);
+        });
     });
 }

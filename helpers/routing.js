@@ -45,7 +45,8 @@ basicRouting.get('/pages/:pageKey', async (ctx) => {
     
     // read the page configuration from the .config file
     const pagesManager = new PagesManager();
-    const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, pageKey);
+    const pageConfig = await pagesManager.GetPageConfigByAppKeyAndPageKey(appKey, "usersEdit");
+    Logger.log("Page config read succesfully");
 
     // gets the scheleton, according to the config
     let skeletonContent = await pagesManager.GetSkeleton(appKey, pageConfig.skeleton);

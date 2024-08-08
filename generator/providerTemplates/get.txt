@@ -1,20 +1,26 @@
 async function ##functionName##(params, callback) {
-    logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
-    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-        if (error) {return logger.log(error.message);}
-        db.serialize(() => {
-            let result = {};
-            logger.log("##tableName##Provider->##functionName## Started with params: " + JSON.stringify(params));
-            db.each(`SELECT ##selectFields## FROM ##selectFrom## ##whereString##`, [##whereParams##], (error, row) => {
-                if (error) {return logger.log(error);}
-                let recordToReturn = 
-##FieldsAsObject##                
-                result = recordToReturn;
-            },
-            function() {
-                logger.log("##tableName##Provider->##functionName## Finished (callback)");
-                logger.log("##tableName##Provider->##functionName## this is the result: " + JSON.stringify(result));
-                if (callback != null) callback(null, result);
+    return new Promise((resolve, reject) => {
+        logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
+            if (error) {
+                return logger.error(error.message);
+                reject(null);
+            }
+            db.serialize(() => {
+                let result = {};
+                logger.log("##tableName##Provider->##functionName## Started with params: " + JSON.stringify(params));
+                db.each(`SELECT ##selectFields## FROM ##selectFrom## ##whereString##`, [##whereParams##], (error, row) => {
+                    if (error) {return logger.log(error);}
+                    let recordToReturn = 
+    ##FieldsAsObject##                
+                    result = recordToReturn;
+                },
+                function() {
+                    logger.log("##tableName##Provider->##functionName## Finished (callback)");
+                    logger.log("##tableName##Provider->##functionName## this is the result: " + JSON.stringify(result));
+                    resolve(result);
+                    if (callback != null) callback(null, result);
+                });
             });
         });
     });

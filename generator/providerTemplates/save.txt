@@ -1,40 +1,47 @@
 // save
 async function ##functionName##(params, callback) {
-    logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
-    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-        if (error) {logger.error(error.message); return;}
-        if (params.id > 0) {
-            db.serialize(() => {
-                logger.log("##tableName##Provider->##functionName##(update) Started");
-                db.prepare(`UPDATE ##tableName## SET ##listUpdateFieldsSQL## WHERE id=?`, ##listUpdateFieldsArray##).run(
-                    err => {
-                        if (err != null) { db.close(); logger.error(err.message) };
-                    }
-                    ).finalize(err => {
-                        if (err != null) { db.close(); logger.error(err.message) };
-                    });
-                db.close();
-                logger.log("##tableName##Provider->##functionName##(update) Finished");
-                if (callback != null) callback(null, "ok");
-            });
-        }
-        else
-        {
-            db.serialize(() => {
-                logger.log("##tableName##Provider->##functionName##(insert) Started");
-                const uniqueUUID = uuid.v4();
-                logger.log("##tableName##Provider->##functionName## Generated guid for new record: " + uniqueUUID);
-                db.prepare(`INSERT INTO ##tableName## (##listInsertFieldsSQL##,guid,isDeleted) VALUES (##listInsertFieldsValues##,?,?)`, [##listInsertFieldsArray##,uniqueUUID,0]).run(
-                    err => {
-                        if (err != null) { db.close(); logger.error(err.message) };
-                    }
-                    ).finalize(err => {
-                        if (err != null) { db.close(); logger.error(err.message) };
-                    });
-                db.close();
-                logger.log("##tableName##Provider->##functionName##(insert) Finished");
-                if (callback != null) callback(null, "ok");
-            });            
-        }
+    return new Promise((resolve, reject) => {
+        logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
+			if (error) {
+				logger.error("Database error: " + error.message);
+                return reject(error);
+			}
+            if (params.id > 0) {
+                db.serialize(() => {
+                    logger.log("##tableName##Provider->##functionName##(update) Started");
+                    db.prepare(`UPDATE ##tableName## SET ##listUpdateFieldsSQL## WHERE id=?`, ##listUpdateFieldsArray##).run(
+                        err => {
+                            if (err != null) { db.close(); logger.error(err.message) };
+                        }
+                        ).finalize(err => {
+                            if (err != null) { db.close(); logger.error(err.message) };
+                        });
+                    db.close();
+                    logger.log("##tableName##Provider->##functionName##(update) Finished");
+                    resolve(null);
+                    if (callback != null) callback(null, "ok");
+                });
+            }
+            else
+            {
+                db.serialize(() => {
+                    logger.log("##tableName##Provider->##functionName##(insert) Started");
+                    const uniqueUUID = uuid.v4();
+                    logger.log("##tableName##Provider->##functionName## Generated guid for new record: " + uniqueUUID);
+                    db.prepare(`INSERT INTO ##tableName## (##listInsertFieldsSQL##,guid,isDeleted) VALUES (##listInsertFieldsValues##,?,?)`, [##listInsertFieldsArray##,uniqueUUID,0]).run(
+                        err => {
+                            if (err != null) { db.close(); logger.error(err.message) };
+                        }
+                        ).finalize(err => {
+                            if (err != null) { db.close(); logger.error(err.message) };
+                        });
+                    db.close();
+                    logger.log("##tableName##Provider->##functionName##(insert) Finished");
+                    resolve(null);
+                    if (callback != null) callback(null, "ok");
+                });            
+            }
+        });
     });
 }

@@ -18,7 +18,7 @@ const app = new Koa();
 // env File Check
 Logger.log("Checking mandatory .env settings");
 const settingsServerENV = process.env["SERVER_ENV"];
-Logger.log("SERVER_ENV: " + settingsServerENV);
+Logger.log("--- SERVER_ENV: " + settingsServerENV);
 if (settingsServerENV == undefined) {
   Logger.error("Could not retrieve SERVER_END in .env file. Shutting down...");
   return;
@@ -28,7 +28,7 @@ if (settingsServerENV != "dev" && settingsServerENV != "prod") {
   return;
 }
 const settingsAppKeyENV = process.env["APP_KEY"];
-Logger.log("APP_KEY: " + settingsAppKeyENV);
+Logger.log("--- APP_KEY: " + settingsAppKeyENV);
 if (settingsAppKeyENV == undefined || settingsAppKeyENV == null || settingsAppKeyENV == '') {
   Logger.error("Could not retrieve APP_KEY in .env file. Shutting down...");
   return;
@@ -55,9 +55,6 @@ filesAPI.forEach(file => {
   let thisFileApiRequire = require("./" + filePath);
   app.use(thisFileApiRequire.routes());
 });
-
-//let departmentsAPI = require("./api/departmentsAPI.js");
-//app.use(departmentsAPI.routes());
 Logger.log("Done!");
 
 // all good
@@ -65,9 +62,21 @@ Logger.log("App was started correctly");
 
 
 // test area
-//const aaa = require('./apps/testapp/db/providers/departmentsProvider');
-//aaa.getIdByGuid("8861f886-dff1-4faa-af14-937eefa820a4");
-//aaa.listAll();
-
+/*
+const aaa = require('./apps/testapp/db/providers/departmentsProvider');
+(async () => {
+  try {
+    Logger.log("Calling getIdByGuid...");
+    const id = await aaa.getIdByGuid("8861f886-dff1-4faa-af14-937eefa820a4");
+    Logger.log("The retrieved ID is: " + id);
+    
+    Logger.log("Calling listAll...");
+    const a = await aaa.listForGrid();  
+    Logger.log("listAll result: " + JSON.stringify(a));  // Log the result from listAll
+  } catch (error) {
+    Logger.log("An error occurred: " + error.message);
+  }
+})();
+*/
 
 app.listen(3000);

@@ -5,3 +5,7 @@ db-migrate create --migrations-dir apps/testapp/db/migrations init
 db-migrate up --migrations-dir apps/testapp/db/migrations -e dev
 
 node generator.js
+
+
+sample page url
+https://skep-dtfm--3000--adbcd1bf.local-credentialless.webcontainer.io/pages/usersEdit

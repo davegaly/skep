@@ -9,26 +9,31 @@ const dbHelper = require('../../../../helpers/dbManager');
 const logger = require('../../../../helpers/logger');
 
 async function getIdByGuid(guid, callback) {
-    logger.log("##tableName##Provider->getIdByGuid called with guid " + guid);
-    const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-        if (error) {return logger.error(error.message);}
-        db.serialize(() => {
-            let result = -1;
-            db.get(`SELECT id FROM ##tableName## WHERE guid=? LIMIT 1`, [guid], (error, row) => {
-                if (row != undefined) {
-                    logger.log("##tableName##Provider->getIdByGuid returned row obj " + JSON.stringify(row));
-                    if (error != null) logger.log("##tableName##Provider->getIdByGuid sql Error:" + error);
-                    result = row.id;
-                    logger.log("##tableName##Provider->getIdByGuid this is the result: " + result);
-                }
-                else
-                {
-                    logger.log("departmentsProvider->getIdByGuid record not found");
-                }
-                if (callback != null) callback(null, result);
-            });
-        });
-    });
+	return new Promise((resolve, reject) => {
+		logger.log("##tableName##Provider->getIdByGuid called with guid " + guid);
+		const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
+			if (error) {
+				logger.error("Database error: " + error.message);
+                return reject(error);
+			}
+			db.serialize(() => {
+				let result = -1;
+				db.get(`SELECT id FROM ##tableName## WHERE guid=? LIMIT 1`, [guid], (error, row) => {
+					if (row != undefined) {
+						logger.log("##tableName##Provider->getIdByGuid returned row obj " + JSON.stringify(row));
+						if (error != null) logger.log("##tableName##Provider->getIdByGuid sql Error:" + error);
+						resolve(row.id);
+					}
+					else
+					{
+						logger.log("departmentsProvider->getIdByGuid record not found");
+						resolve(null);
+					}
+					if (callback != null) callback(null, result);
+				});
+			});
+		});
+	});
 }
 
 ##listAPIs##
