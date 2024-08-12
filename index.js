@@ -62,10 +62,12 @@ Logger.log("App was started correctly");
 
 
 // test area
-/*
+
 const aaa = require('./apps/testapp/db/providers/departmentsProvider');
 (async () => {
   try {
+    await aaa.save({name: 'dipartimento2'});
+
     Logger.log("Calling getIdByGuid...");
     const id = await aaa.getIdByGuid("8861f886-dff1-4faa-af14-937eefa820a4");
     Logger.log("The retrieved ID is: " + id);
@@ -77,6 +79,5 @@ const aaa = require('./apps/testapp/db/providers/departmentsProvider');
     Logger.log("An error occurred: " + error.message);
   }
 })();
-*/
 
 app.listen(3000);
