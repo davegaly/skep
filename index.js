@@ -4,6 +4,7 @@ const router = require('@koa/router')();
 const logger = require('koa-logger');
 const fs = require("fs");
 const path = require('path');
+const bodyParser = require('koa-bodyparser');   
 
 const Logger = require('./helpers/logger');
 
@@ -37,6 +38,7 @@ if (settingsAppKeyENV == undefined || settingsAppKeyENV == null || settingsAppKe
 
 // middlewares here
 app.use(logger());
+app.use(bodyParser());  // this gets the POSTs correctly as json
 
 
 // adding routes
@@ -62,11 +64,11 @@ Logger.log("App was started correctly");
 
 
 // test area
-
+/*
 const aaa = require('./apps/testapp/db/providers/departmentsProvider');
 (async () => {
   try {
-    await aaa.save({name: 'dipartimento2'});
+    // await aaa.save({name: 'dipartimento2'});
 
     Logger.log("Calling getIdByGuid...");
     const id = await aaa.getIdByGuid("8861f886-dff1-4faa-af14-937eefa820a4");
@@ -79,5 +81,6 @@ const aaa = require('./apps/testapp/db/providers/departmentsProvider');
     Logger.log("An error occurred: " + error.message);
   }
 })();
+*/
 
 app.listen(3000);

@@ -3,16 +3,17 @@
   "private": true,
   "dependencies": {
     "@koa/router": "^12.0.1",
-    "dotenv": "^16.4.5",
-    "koa": "^2.13.1",
-    "koa-logger": "^3.2.1",
-    "koa-pino-logger": "^3.0.0",
     "data-elevator-sqlite3": "^4.0.1",
     "db-migrate": "^0.11.14",
     "db-migrate-sqlite3": "^0.5.0",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.4.1",
+    "koa-logger": "^3.2.1",
+    "koa-pino-logger": "^3.0.0",
     "sqlite3": "^5.1.6",
-    "uuid": "^9.0.1",
-    "jsonwebtoken": "^9.0.2"        
+    "uuid": "^9.0.1"
   },
   "scripts": {
     "start": "node index.js"

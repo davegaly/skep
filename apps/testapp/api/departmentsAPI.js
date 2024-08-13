@@ -14,7 +14,7 @@ const departmentsRouter = new Router({
 departmentsRouter.get('/getByGuid/:guid', authBusiness.authCheckCredentials, async (ctx, next) => {
   await new Promise((resolve, reject) => {
     console.log("departmentsAPI->getByGuid, with params " + JSON.stringify(ctx.params) + " Started");
-    departmentsProvider.getByGuid(ctx.params.id, function(err,result) {
+    departmentsProvider.getByGuid(ctx.params, function(err,result) {
       ctx.body = result;
       console.log("departmentsAPI->getByGuid finished");
       resolve();
@@ -70,6 +70,7 @@ departmentsRouter.get('/listAll', authBusiness.authCheckCredentials, async (ctx,
 // save
 departmentsRouter.post('/save', authBusiness.authCheckCredentials, async (ctx, next) => {
   await new Promise(async (resolve, reject) => {    
+    console.log("departmentsAPI->save started with body: " + JSON.stringify(ctx.request.body));
     if (departmentsBusiness.saveAdjustInputCtx !== undefined) {
       await departmentsBusiness.saveAdjustInputCtx(ctx);
     }

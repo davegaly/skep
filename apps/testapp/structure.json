@@ -12,7 +12,7 @@
                     "type":"get", 
                     "name":"getByGuid",
                     "extendedUrl": "/:guid",
-                    "apiReturnFields": ["guid","name"],
+                    "apiReturnFields": ["id","guid","name"],
                     "dbProviderMethodName":"getByGuid",
                     "whereString": "guid=? AND id IS NOT NULL AND isDeleted=0",
                     "whereParams": ["params.guid"]

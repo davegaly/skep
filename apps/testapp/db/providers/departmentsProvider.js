@@ -51,6 +51,7 @@ async function getByGuid(params, callback) {
                     if (error) {return logger.log(error);}
                     let recordToReturn = 
     				{
+					id: row.id,
 					guid: row.guid,
 					name: row.name,
 				}                
