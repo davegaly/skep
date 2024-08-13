@@ -33,7 +33,7 @@ function loadDepartment() {
 function saveDepartment() {
     
     let objectToPost = {};
-    objectToPost.id = currentDepartment.id;
+    if (currentDepartment != null) objectToPost.id = currentDepartment.id;
     objectToPost.guid = querystringParamGuid;
     objectToPost.name = document.getElementById('txtName').value;
 
@@ -59,4 +59,19 @@ function btnSaveOnClick() {
 // goes to departments list
 function btnGoBackOnClick() {
     skepUIGoToPage("departments");
+}
+
+// delete
+function btnDeleteOnClick() {
+    fetch('../api/departments/deleteLogic/' + querystringParamGuid) // Replace with your local API URL
+    .then(response => {
+        // Check if the response is ok (status code in the range 200-299)
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Parse the JSON from the response
+    })
+    .then(data => {
+        btnGoBackOnClick();
+    });
 }

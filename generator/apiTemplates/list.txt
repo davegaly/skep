@@ -1,14 +1,16 @@
 // ##apiName##
 ##tableName##Router.get('/##apiName####extendedUrl##', authBusiness.authCheckCredentials, async (ctx, next) => {
-  await new Promise( async (resolve, reject) => {
-    console.log("##tableName##API->##apiName## Started");
-    if (##tableName##Business.##apiName##AdjustInputCtx !== undefined) {
-      await ##tableName##Business.##apiName##AdjustInputCtx(ctx);
-    }
-    ##tableName##Provider.##dbProviderMethodName##(ctx.params, function(err,result) {
-      ctx.body = result;
-      console.log("##tableName##API->##apiName## finished");
-      resolve();
-    });    
-  });  
+  logger.log("##tableName##API->##apiName## Started");
+  if (##tableName##Business.##apiName##AdjustInputCtx !== undefined) {
+    await ##tableName##Business.##apiName##AdjustInputCtx(ctx);
+  }
+  try {
+    const result = await ##tableName##Provider.##dbProviderMethodName##(ctx.params);
+    ctx.body = result;
+  } catch (err) {
+    ctx.status = 500;
+    ctx.body = { error: "Internal server error" };
+    logger.error("##tableName##API->##apiName## failed: " + err.message);
+  }
+  logger.log("##tableName##API->##apiName## finished");
 });

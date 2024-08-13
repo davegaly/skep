@@ -1,47 +1,59 @@
 // save
-async function ##functionName##(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
-            if (params.id > 0) {
+async function ##functionName##(params) {
+    logger.log("##tableName##Provider->##functionName## Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        if (params.id > 0) {
+            // Update existing record
+            await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("##tableName##Provider->##functionName##(update) Started");
-                    db.prepare(`UPDATE ##tableName## SET ##listUpdateFieldsSQL## WHERE id=?`, ##listUpdateFieldsArray##).run(
-                        err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        }
-                        ).finalize(err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        });
-                    db.close();
-                    logger.log("##tableName##Provider->##functionName##(update) Finished");
-                    resolve(null);
-                    if (callback != null) callback(null, "ok");
+                    db.prepare(`UPDATE ##tableName## SET ##listUpdateFieldsSQL## WHERE id=?`, ##listUpdateFieldsArray##)
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
                 });
-            }
-            else
-            {
+            });
+            logger.log("##tableName##Provider->##functionName##(update) Finished");
+        } else {
+            // Insert new record
+            await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("##tableName##Provider->##functionName##(insert) Started");
                     const uniqueUUID = uuid.v4();
                     logger.log("##tableName##Provider->##functionName## Generated guid for new record: " + uniqueUUID);
-                    db.prepare(`INSERT INTO ##tableName## (##listInsertFieldsSQL##,guid,isDeleted) VALUES (##listInsertFieldsValues##,?,?)`, [##listInsertFieldsArray##,uniqueUUID,0]).run(
-                        err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        }
-                        ).finalize(err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        });
-                    db.close();
-                    logger.log("##tableName##Provider->##functionName##(insert) Finished");
-                    resolve(null);
-                    if (callback != null) callback(null, "ok");
-                });            
-            }
-        });
-    });
+                    db.prepare(`INSERT INTO ##tableName## (##listInsertFieldsSQL##,guid,isDeleted) VALUES (##listInsertFieldsValues##,?,?)`, [##listInsertFieldsArray##, uniqueUUID, 0])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
+                });
+            });
+            logger.log("##tableName##Provider->##functionName##(insert) Finished");
+        }
+        db.close();
+        return "ok";
+    } catch (error) {
+        logger.error("##tableName##Provider->##functionName## error: " + error.message);
+        throw error;
+    }
 }

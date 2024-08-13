@@ -8,33 +8,36 @@ const uuid = require('uuid');
 const dbHelper = require('../../../../helpers/dbManager');
 const logger = require('../../../../helpers/logger');
 
-async function getIdByGuid(guid, callback) {
-	return new Promise((resolve, reject) => {
-		logger.log("##tableName##Provider->getIdByGuid called with guid " + guid);
-		const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
-			db.serialize(() => {
-				let result = -1;
-				db.get(`SELECT id FROM ##tableName## WHERE guid=? LIMIT 1`, [guid], (error, row) => {
-					if (row != undefined) {
-						logger.log("##tableName##Provider->getIdByGuid returned row obj " + JSON.stringify(row));
-						if (error != null) logger.log("##tableName##Provider->getIdByGuid sql Error:" + error);
-						resolve(row.id);
-					}
-					else
-					{
-						logger.log("departmentsProvider->getIdByGuid record not found");
-						resolve(null);
-					}
-					if (callback != null) callback(null, result);
-				});
-			});
-		});
-	});
+async function getIdByGuid(guid) {
+    logger.log("##tableName##Provider->getIdByGuid called with guid " + guid);
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            db.serialize(() => {
+                db.get(`SELECT id FROM ##tableName## WHERE guid=? LIMIT 1`, [guid], (error, row) => {
+                    if (error) {
+                        logger.error("##tableName##Provider->getIdByGuid SQL Error: " + error.message);
+                        return reject(error);
+                    }
+
+                    if (row) {
+                        logger.log("##tableName##Provider->getIdByGuid returned row obj " + JSON.stringify(row));
+                        resolve(row.id);
+                    } else {
+                        logger.log("##tableName##Provider->getIdByGuid record not found");
+                        resolve(null);
+                    }
+                });
+            });
+        });
+        db.close();
+        return result;
+    } catch (error) {
+        logger.error("##tableName##Provider->getIdByGuid error: " + error.message);
+        throw error;
+    }
 }
+
 
 ##listAPIs##
 

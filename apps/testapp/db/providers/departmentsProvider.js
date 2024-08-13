@@ -8,237 +8,308 @@ const uuid = require('uuid');
 const dbHelper = require('../../../../helpers/dbManager');
 const logger = require('../../../../helpers/logger');
 
-async function getIdByGuid(guid, callback) {
-	return new Promise((resolve, reject) => {
-		logger.log("departmentsProvider->getIdByGuid called with guid " + guid);
-		const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
-			db.serialize(() => {
-				let result = -1;
-				db.get(`SELECT id FROM departments WHERE guid=? LIMIT 1`, [guid], (error, row) => {
-					if (row != undefined) {
-						logger.log("departmentsProvider->getIdByGuid returned row obj " + JSON.stringify(row));
-						if (error != null) logger.log("departmentsProvider->getIdByGuid sql Error:" + error);
-						resolve(row.id);
-					}
-					else
-					{
-						logger.log("departmentsProvider->getIdByGuid record not found");
-						resolve(null);
-					}
-					if (callback != null) callback(null, result);
-				});
-			});
-		});
-	});
+async function getIdByGuid(guid) {
+    logger.log("departmentsProvider->getIdByGuid called with guid " + guid);
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            db.serialize(() => {
+                db.get(`SELECT id FROM departments WHERE guid=? LIMIT 1`, [guid], (error, row) => {
+                    if (error) {
+                        logger.error("departmentsProvider->getIdByGuid SQL Error: " + error.message);
+                        return reject(error);
+                    }
+
+                    if (row) {
+                        logger.log("departmentsProvider->getIdByGuid returned row obj " + JSON.stringify(row));
+                        resolve(row.id);
+                    } else {
+                        logger.log("departmentsProvider->getIdByGuid record not found");
+                        resolve(null);
+                    }
+                });
+            });
+        });
+        db.close();
+        return result;
+    } catch (error) {
+        logger.error("departmentsProvider->getIdByGuid error: " + error.message);
+        throw error;
+    }
 }
 
-async function getByGuid(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->getByGuid Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-            if (error) {
-                return logger.error(error.message);
-                reject(null);
-            }
+
+// getByGuid
+async function getByGuid(params) {
+    logger.log("departmentsProvider->getByGuid Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            let resultObject = {};
+            logger.log("departmentsProvider->getByGuid Started with params: " + JSON.stringify(params));
+
             db.serialize(() => {
-                let result = {};
-                logger.log("departmentsProvider->getByGuid Started with params: " + JSON.stringify(params));
-                db.each(`SELECT * FROM departments WHERE guid=? AND id IS NOT NULL AND isDeleted=0`, [params.guid,], (error, row) => {
-                    if (error) {return logger.log(error);}
-                    let recordToReturn = 
-    				{
+                db.each(`SELECT * FROM departments WHERE guid=? AND id IS NOT NULL AND isDeleted=0`, [params.guid,],
+                    (error, row) => {
+                        if (error) {
+                            logger.error(error.message);
+                            return reject(error);
+                        }
+                        let recordToReturn = 				{
 					id: row.id,
 					guid: row.guid,
 					name: row.name,
-				}                
-                    result = recordToReturn;
-                },
-                function() {
-                    logger.log("departmentsProvider->getByGuid Finished (callback)");
-                    logger.log("departmentsProvider->getByGuid this is the result: " + JSON.stringify(result));
-                    resolve(result);
-                    if (callback != null) callback(null, result);
-                });
+				};
+                        resultObject = recordToReturn; // Since it's a single result, we overwrite resultObject
+                    },
+                    (err) => {
+                        if (err) {
+                            logger.error(err.message);
+                            return reject(err);
+                        }
+                        logger.log("departmentsProvider->getByGuid Finished (Promise resolved)");
+                        resolve(resultObject);
+                    }
+                );
             });
         });
-    });
+        db.close();
+        logger.log("departmentsProvider->getByGuid this is the result: " + JSON.stringify(result));
+        return result;
+    } catch (error) {
+        logger.error("departmentsProvider->getByGuid error: " + error.message);
+        throw error;
+    }
 }
 
-async function listForGrid(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->listForGrid Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
+
+// listForGrid
+async function listForGrid(params) {
+    logger.log("departmentsProvider->listForGrid Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            let resultsArray = [];
+            logger.log("departmentsProvider->listForGrid Started with params: " + JSON.stringify(params));
             db.serialize(() => {
-                let result = [];
-                logger.log("departmentsProvider->listForGrid Started with params: " + JSON.stringify(params));
-                db.each(`SELECT * FROM departments WHERE isDeleted=0`, [], (error, row) => {
-                    if (error) {console.error(error); return;}
-                    let recordToReturn = 
-    				{
+                db.each(`SELECT * FROM departments WHERE isDeleted=0`, [],
+                    (error, row) => {
+                        if (error) {
+                            logger.error(error.message);
+                            return reject(error);
+                        }
+                        let recordToReturn = 				{
 					guid: row.guid,
 					name: row.name,
-				}                
-                    result.push(recordToReturn);
-                },
-                function() {
-                    logger.log("departmentsProvider->listForGrid Finished (callback)");
-                    logger.log("departmentsProvider->listForGrid this is the result: " + JSON.stringify(result));
-                    resolve(result);
-                    if (callback != null) callback(null, result);
-                });
+				};
+                        resultsArray.push(recordToReturn);
+                    },
+                    (err) => {
+                        if (err) {
+                            logger.error(err.message);
+                            return reject(err);
+                        }
+                        logger.log("departmentsProvider->listForGrid Finished (Promise resolved)");
+                        resolve(resultsArray);
+                    }
+                );
             });
         });
-    });
+        db.close();
+        logger.log("departmentsProvider->listForGrid this is the result: " + JSON.stringify(result));
+        return result;
+    } catch (error) {
+        logger.error("departmentsProvider->listForGrid error: " + error.message);
+        throw error;
+    }
 }
 
-async function listForDropdown(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->listForDropdown Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
+
+// listForDropdown
+async function listForDropdown(params) {
+    logger.log("departmentsProvider->listForDropdown Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            let resultsArray = [];
+            logger.log("departmentsProvider->listForDropdown Started with params: " + JSON.stringify(params));
             db.serialize(() => {
-                let result = [];
-                logger.log("departmentsProvider->listForDropdown Started with params: " + JSON.stringify(params));
-                db.each(`SELECT * FROM departments WHERE isDeleted=0`, [], (error, row) => {
-                    if (error) {console.error(error); return;}
-                    let recordToReturn = 
-    				{
+                db.each(`SELECT * FROM departments WHERE isDeleted=0`, [],
+                    (error, row) => {
+                        if (error) {
+                            logger.error(error.message);
+                            return reject(error);
+                        }
+                        let recordToReturn = 				{
 					guid: row.guid,
 					name: row.name,
-				}                
-                    result.push(recordToReturn);
-                },
-                function() {
-                    logger.log("departmentsProvider->listForDropdown Finished (callback)");
-                    logger.log("departmentsProvider->listForDropdown this is the result: " + JSON.stringify(result));
-                    resolve(result);
-                    if (callback != null) callback(null, result);
-                });
+				};
+                        resultsArray.push(recordToReturn);
+                    },
+                    (err) => {
+                        if (err) {
+                            logger.error(err.message);
+                            return reject(err);
+                        }
+                        logger.log("departmentsProvider->listForDropdown Finished (Promise resolved)");
+                        resolve(resultsArray);
+                    }
+                );
             });
         });
-    });
+        db.close();
+        logger.log("departmentsProvider->listForDropdown this is the result: " + JSON.stringify(result));
+        return result;
+    } catch (error) {
+        logger.error("departmentsProvider->listForDropdown error: " + error.message);
+        throw error;
+    }
 }
 
-async function listAll(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->listAll Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
+
+// listAll
+async function listAll(params) {
+    logger.log("departmentsProvider->listAll Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        const result = await new Promise((resolve, reject) => {
+            let resultsArray = [];
+            logger.log("departmentsProvider->listAll Started with params: " + JSON.stringify(params));
             db.serialize(() => {
-                let result = [];
-                logger.log("departmentsProvider->listAll Started with params: " + JSON.stringify(params));
-                db.each(`SELECT * FROM departments `, [], (error, row) => {
-                    if (error) {console.error(error); return;}
-                    let recordToReturn = 
-    				{
+                db.each(`SELECT * FROM departments `, [],
+                    (error, row) => {
+                        if (error) {
+                            logger.error(error.message);
+                            return reject(error);
+                        }
+                        let recordToReturn = 				{
 					id: row.id,
 					guid: row.guid,
 					name: row.name,
 					isDeleted: row.isDeleted,
-				}                
-                    result.push(recordToReturn);
-                },
-                function() {
-                    logger.log("departmentsProvider->listAll Finished (callback)");
-                    logger.log("departmentsProvider->listAll this is the result: " + JSON.stringify(result));
-                    resolve(result);
-                    if (callback != null) callback(null, result);
-                });
+				};
+                        resultsArray.push(recordToReturn);
+                    },
+                    (err) => {
+                        if (err) {
+                            logger.error(err.message);
+                            return reject(err);
+                        }
+                        logger.log("departmentsProvider->listAll Finished (Promise resolved)");
+                        resolve(resultsArray);
+                    }
+                );
             });
         });
-    });
+        db.close();
+        logger.log("departmentsProvider->listAll this is the result: " + JSON.stringify(result));
+        return result;
+    } catch (error) {
+        logger.error("departmentsProvider->listAll error: " + error.message);
+        throw error;
+    }
 }
 
+
 // save
-async function save(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->save Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-			if (error) {
-				logger.error("Database error: " + error.message);
-                return reject(error);
-			}
-            if (params.id > 0) {
+async function save(params) {
+    logger.log("departmentsProvider->save Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        if (params.id > 0) {
+            // Update existing record
+            await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("departmentsProvider->save(update) Started");
-                    db.prepare(`UPDATE departments SET name=? WHERE id=?`, [params.name,params.id]).run(
-                        err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        }
-                        ).finalize(err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        });
-                    db.close();
-                    logger.log("departmentsProvider->save(update) Finished");
-                    resolve(null);
-                    if (callback != null) callback(null, "ok");
+                    db.prepare(`UPDATE departments SET name=? WHERE id=?`, [params.name,params.id])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
                 });
-            }
-            else
-            {
+            });
+            logger.log("departmentsProvider->save(update) Finished");
+        } else {
+            // Insert new record
+            await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("departmentsProvider->save(insert) Started");
                     const uniqueUUID = uuid.v4();
                     logger.log("departmentsProvider->save Generated guid for new record: " + uniqueUUID);
-                    db.prepare(`INSERT INTO departments (name,guid,isDeleted) VALUES (?,?,?)`, [params.name,uniqueUUID,0]).run(
-                        err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        }
-                        ).finalize(err => {
-                            if (err != null) { db.close(); logger.error(err.message) };
-                        });
-                    db.close();
-                    logger.log("departmentsProvider->save(insert) Finished");
-                    resolve(null);
-                    if (callback != null) callback(null, "ok");
-                });            
-            }
-        });
-    });
+                    db.prepare(`INSERT INTO departments (name,guid,isDeleted) VALUES (?,?,?)`, [params.name, uniqueUUID, 0])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
+                });
+            });
+            logger.log("departmentsProvider->save(insert) Finished");
+        }
+        db.close();
+        return "ok";
+    } catch (error) {
+        logger.error("departmentsProvider->save error: " + error.message);
+        throw error;
+    }
 }
 
+
 // logic delete
-async function deleteLogic(params, callback) {
-    return new Promise((resolve, reject) => {
-        logger.log("departmentsProvider->deleteLogic Started: " + JSON.stringify(params));
-        const db = new sqlite3.Database(dbHelper.ReturnDBPath(), (error) => {
-            if (error) {
-                return logger.error(error.message);
-                reject(null);
-            }
-            if (params.id > 0) {
+async function deleteLogic(params) {
+    logger.log("departmentsProvider->deleteLogic Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        if (params.guid != null && params.guid !== '') {
+            await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("departmentsProvider->deleteLogic(logic delete) Started");
-                    db.prepare(`UPDATE departments SET isDeleted=1 WHERE id=?`, [params.id]).run(
-                        err => {
-                            if (err != null) { db.close(); logger.log(err.message) };
-                        }
-                        ).finalize(err => {
-                            if (err != null) { db.close(); logger.log(err.message) };
-                        });
-                    db.close();
-                    logger.log("departmentsProvider->deleteLogic(logic delete) Finished");
-                    if (callback != null) callback(null, "ok");
+
+                    db.prepare(`UPDATE departments SET isDeleted=1 WHERE guid=?`, [params.guid])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
                 });
-            }
-            resolve(null);
-        });
-    });
+            });
+            db.close();
+            logger.log("departmentsProvider->deleteLogic(logic delete) Finished");
+            return "ok";
+        } else {
+            throw new Error("Invalid GUID");
+        }
+    } catch (error) {
+        logger.error("departmentsProvider->deleteLogic error: " + error.message);
+        throw error;
+    }
 }
+
 
 
 
