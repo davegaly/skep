@@ -37,3 +37,33 @@ async function skepUICallAPI(url, bodyToPost) {
 function skepUICallAPIAndWait(url, bodyToPost) {
     return skepUICallAPI(url, bodyToPost); // Always return a promise that can be awaited
 }
+
+// attaches a list of objects (datasource) to a skep <table>
+function skepUITableDataBind(tableId, datasource) {
+    // Select the table by its ID
+    const table = document.getElementById(tableId);
+    if (!table) return; // If table doesn't exist, exit the function
+    // Get the <thead> element and its <th> elements
+    const thElements = table.querySelectorAll('thead th');
+    // Select the <tbody> where we'll insert rows
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = ""; // Clear any existing rows
+    // Iterate over the datasource (array of objects)
+    datasource.forEach(dataItem => {
+        // Create a new row
+        let rowHtml = "<tr>";
+        // Iterate over each <th> element
+        thElements.forEach(th => {
+            // Get the data-field attribute from the <th>
+            const field = th.getAttribute('data-field');
+            // Get the corresponding value from the dataItem
+            const cellValue = dataItem[field] !== undefined ? dataItem[field] : '';
+            // Append the value as a new <td>
+            rowHtml += `<td>${cellValue}</td>`;
+        });
+        rowHtml += "</tr>";
+        // Append the row to the <tbody>
+        tbody.innerHTML += rowHtml;
+    });
+
+}

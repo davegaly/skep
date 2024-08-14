@@ -15,6 +15,7 @@ class PagesContentManager {
       else if (currentLineContent == '/') { htmlContent += this.RenderCloseDiv(); }
       else if (currentLineContent.startsWith('txt')) { htmlContent += this.RenderTextbox(currentLineContent); }
       else if (currentLineContent.startsWith('btn')) { htmlContent += this.RenderButton(currentLineContent); }
+      else if (currentLineContent.startsWith('tbl')) { htmlContent += this.RenderTable(currentLineContent); }
       else { htmlContent += currentLineContent; }
 
     });
@@ -45,7 +46,31 @@ class PagesContentManager {
     const fullId = 'btn' + this.CapitalizeFirstLetter(id);
     let btn = "<button id='" + fullId + "' onclick='" + fullId + "OnClick();' class='btn btn-primary'>" + buttonText + "</button>";
     return btn;
-  }    
+  }   
+  
+  RenderTable(currentLineContent) {
+    // tbl-departments-{"columns":[{"key":"guid","field":"guid","caption":"GUID"},{"key":"name","field":"name","caption":"Nome Dipartimento"}]}
+    const id = currentLineContent.split('-')[1];        
+    const fullId = 'tbl' + this.CapitalizeFirstLetter(id);  // tblDepartments
+    const dataJson = currentLineContent.split('-')[2];   
+    const data = JSON.parse(dataJson);
+    console.log(data);
+    let tableHtml = "";
+    tableHtml += "<table id='" + fullId + "'>";
+    tableHtml += "  <thead>";
+    tableHtml += "    <tr>";
+    data.columns.forEach(column => {
+      tableHtml += "      <th data-field='" + column.field + "' data-key='" + column.key + "'>";
+      tableHtml += column.caption;
+      tableHtml += "      </th>";
+    });
+    tableHtml += "    </tr>";
+    tableHtml += "  </thead>";
+    tableHtml += "  <tbody>";
+    tableHtml += "  </tbody>"; 
+    tableHtml += "</table>";
+    return tableHtml;
+  }   
 
   RenderCloseDiv() {
     return "</div>";

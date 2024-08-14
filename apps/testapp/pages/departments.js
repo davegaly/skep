@@ -1,8 +1,14 @@
+let departmentsList = {};
+
 document.addEventListener('DOMContentLoaded', async function() {
 
     // loads the datagrid
     const apiResult = await skepUICallAPIAndWait('../api/departments/listForGrid');
     if (apiResult.success) {
+        departmentsList = apiResult.data;
+        skepUITableDataBind("tblDepartments", departmentsList);
+
+/*
         const table = document.createElement('table');
         table.style.width = '100%';
         table.setAttribute('border', '1');
@@ -51,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Append the table to the DOM
         document.body.appendChild(table); // You can replace 'document.body' with any other element where you want the table to be placed
+    */
     }
 
 });
