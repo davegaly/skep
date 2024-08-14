@@ -3,6 +3,7 @@ const ##tableName##Provider = require('../db/providers/##tableName##Provider.js'
 const ##tableName##Business  = require('../business/##tableName##Business.js');
 const authBusiness  = require('../../../helpers/authManager.js');
 const logger = require('../../../helpers/logger');
+const ApiManager = require('../../../helpers/apiManager');
 
 // Prefix all routes with: /items
 const ##tableName##Router = new Router({

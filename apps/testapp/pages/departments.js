@@ -1,17 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
 
-    // Step 2: Fetch data from the local API
-    fetch('../api/departments/listForGrid') // Replace with your local API URL
-    .then(response => {
-        // Check if the response is ok (status code in the range 200-299)
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json(); // Parse the JSON from the response
-    })
-    .then(data => {
-        // Step 3: Handle the fetched data
-        // Create a table element
+    // loads the datagrid
+    const apiResult = await skepUICallAPIAndWait('../api/departments/listForGrid');
+    if (apiResult.success) {
         const table = document.createElement('table');
         table.style.width = '100%';
         table.setAttribute('border', '1');
@@ -32,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.createElement('tbody');
 
         // Loop through the data and create rows for each item
-        data.forEach(item => {
+        apiResult.data.forEach(item => {
             const row = document.createElement('tr');
 
             // Create a cell for the GUID
@@ -60,14 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Append the table to the DOM
         document.body.appendChild(table); // You can replace 'document.body' with any other element where you want the table to be placed
-        
-
-
-    })
-    .catch(error => {
-        // Handle any errors that occurred during the fetch
-        console.error('There was a problem with the fetch operation:', error);
-    });
+    }
 
 });
 

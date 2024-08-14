@@ -6,10 +6,9 @@
   }
   try {
     const result = await ##tableName##Provider.##dbProviderMethodName##(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("##tableName##API->##apiName## failed: " + err.message);
   }
   logger.log("##tableName##API->##apiName## finished");

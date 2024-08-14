@@ -3,6 +3,7 @@ const departmentsProvider = require('../db/providers/departmentsProvider.js');
 const departmentsBusiness  = require('../business/departmentsBusiness.js');
 const authBusiness  = require('../../../helpers/authManager.js');
 const logger = require('../../../helpers/logger');
+const ApiManager = require('../../../helpers/apiManager');
 
 // Prefix all routes with: /items
 const departmentsRouter = new Router({
@@ -16,10 +17,9 @@ departmentsRouter.get('/getByGuid/:guid', authBusiness.authCheckCredentials, asy
   logger.log("departmentsAPI->getByGuid, with params " + JSON.stringify(ctx.params) + " Started");
   try {
     const result = await departmentsProvider.getByGuid(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the API");
     logger.error("departmentsAPI->getByGuid failed: " + err.message);
   }
   logger.log("departmentsAPI->getByGuid finished");
@@ -34,10 +34,9 @@ departmentsRouter.get('/listForGrid', authBusiness.authCheckCredentials, async (
   }
   try {
     const result = await departmentsProvider.listForGrid(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("departmentsAPI->listForGrid failed: " + err.message);
   }
   logger.log("departmentsAPI->listForGrid finished");
@@ -52,10 +51,9 @@ departmentsRouter.get('/listForDropdown', authBusiness.authCheckCredentials, asy
   }
   try {
     const result = await departmentsProvider.listForDropdown(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("departmentsAPI->listForDropdown failed: " + err.message);
   }
   logger.log("departmentsAPI->listForDropdown finished");
@@ -70,10 +68,9 @@ departmentsRouter.get('/listAll', authBusiness.authCheckCredentials, async (ctx,
   }
   try {
     const result = await departmentsProvider.listAll(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("departmentsAPI->listAll failed: " + err.message);
   }
   logger.log("departmentsAPI->listAll finished");
@@ -89,10 +86,9 @@ departmentsRouter.post('/save', authBusiness.authCheckCredentials, async (ctx, n
   logger.log("departmentsAPI->save(" + JSON.stringify(params) + ") Started");
   try {
     const result = await departmentsProvider.save(params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("departmentsAPI->save failed: " + err.message);
   }
   logger.log("departmentsAPI->save finished");
@@ -104,10 +100,9 @@ departmentsRouter.get('/deleteLogic/:guid', authBusiness.authCheckCredentials, a
   logger.log("departmentsAPI->deleteLogic(deleteLogic), with params " + JSON.stringify(ctx.params) + " Started");
   try {
     const result = await departmentsProvider.deleteLogic(ctx.params);
-    ctx.body = result;
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
   } catch (err) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal server error" };
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
     logger.error("departmentsAPI->deleteLogic failed: " + err.message);
   }
   logger.log("departmentsAPI->deleteLogic finished");
