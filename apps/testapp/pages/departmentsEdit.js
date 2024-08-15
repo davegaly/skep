@@ -19,6 +19,7 @@ async function loadDepartment() {
     if (apiResult.success) {
         currentDepartment = apiResult.data;
         document.getElementById('txtName').value = currentDepartment.name;
+        document.getElementById('txtAltroCampo').value = currentDepartment.altroCampo;
     }
 }
 
@@ -29,6 +30,7 @@ async function saveDepartment() {
     if (currentDepartment != null) objectToPost.id = currentDepartment.id;
     objectToPost.guid = querystringParamGuid;
     objectToPost.name = document.getElementById('txtName').value;
+    objectToPost.altroCampo = document.getElementById('txtAltroCampo').value;
     const apiResult = await skepUICallAPIAndWait('../api/departments/save/', objectToPost);
 }
 

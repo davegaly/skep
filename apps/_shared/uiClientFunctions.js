@@ -56,8 +56,14 @@ function skepUITableDataBind(tableId, datasource) {
         thElements.forEach(th => {
             // Get the data-field attribute from the <th>
             const field = th.getAttribute('data-field');
+            const fieldKey = th.getAttribute('data-key');
             // Get the corresponding value from the dataItem
-            const cellValue = dataItem[field] !== undefined ? dataItem[field] : '';
+            let cellValue = dataItem[field] !== undefined ? dataItem[field] : '';
+            // special columns: key=edit
+            if (fieldKey == "edit") { 
+                editFunctionName = tableId + "OnEditClick";
+                cellValue = '<span onclick="' + editFunctionName + '(\'' + dataItem[field] + '\')">modifica</span>'; 
+            }
             // Append the value as a new <td>
             rowHtml += `<td>${cellValue}</td>`;
         });

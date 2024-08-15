@@ -59,6 +59,7 @@ async function getByGuid(params) {
 					id: row.id,
 					guid: row.guid,
 					name: row.name,
+					altroCampo: row.altroCampo,
 				};
                         resultObject = recordToReturn; // Since it's a single result, we overwrite resultObject
                     },
@@ -186,6 +187,7 @@ async function listAll(params) {
 					id: row.id,
 					guid: row.guid,
 					name: row.name,
+					altroCampo: row.altroCampo,
 					isDeleted: row.isDeleted,
 				};
                         resultsArray.push(recordToReturn);
@@ -221,7 +223,7 @@ async function save(params) {
             await new Promise((resolve, reject) => {
                 db.serialize(() => {
                     logger.log("departmentsProvider->save(update) Started");
-                    db.prepare(`UPDATE departments SET name=? WHERE id=?`, [params.name,params.id])
+                    db.prepare(`UPDATE departments SET name=?,altroCampo=? WHERE id=?`, [params.name,params.altroCampo,params.id])
                       .run((err) => {
                           if (err) {
                               logger.error(err.message);
@@ -245,7 +247,7 @@ async function save(params) {
                     logger.log("departmentsProvider->save(insert) Started");
                     const uniqueUUID = uuid.v4();
                     logger.log("departmentsProvider->save Generated guid for new record: " + uniqueUUID);
-                    db.prepare(`INSERT INTO departments (name,guid,isDeleted) VALUES (?,?,?)`, [params.name, uniqueUUID, 0])
+                    db.prepare(`INSERT INTO departments (name,altroCampo,guid,isDeleted) VALUES (?,?,?,?)`, [params.name,params.altroCampo, uniqueUUID, 0])
                       .run((err) => {
                           if (err) {
                               logger.error(err.message);

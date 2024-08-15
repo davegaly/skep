@@ -1,8 +1,13 @@
-db-migrate db:create dummyDbNameNotNeeded -e dev
-db-migrate db:create dummyDbNameNotNeeded -e prod
+-- queste possono essere anche create a mano?
+db-migrate db:create dummyDbNameNotNeeded -e dev -- non sembra funzionare?
+db-migrate db:create dummyDbNameNotNeeded -e prod -- non sembra funzionare?
 
-db-migrate create --migrations-dir apps/testapp/db/migrations init
-db-migrate up --migrations-dir apps/testapp/db/migrations -e dev
+1) db-migrate create --migrations-dir apps/testapp/db/migrations init  -> questa funziona, USARE QUESTA PER CAREA MIGRAZIONI
+2) sistemare a mano il file creato nella cartella /migrations
+3) aggiornare il db: db-migrate up --migrations-dir apps/testapp/db/migrations -e dev
+4) sistemare structure.json e fare generator.js
+
+
 
 node generator.js
 

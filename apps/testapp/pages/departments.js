@@ -62,6 +62,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 });
 
+function tblDepartmentsOnEditClick(fieldValue) {
+    skepUIGoToPage("departmentsEdit?guid=" + fieldValue);
+}
+
 function btnCreateOnClick() {
     skepUIGoToPage("departmentsEdit");
 }

@@ -3,7 +3,8 @@
         {
             "tableName":"departments",
             "fields":[
-                {"fieldName":"name", "fieldType":"TEXT"}
+                {"fieldName":"name", "fieldType":"TEXT"},
+                {"fieldName":"altroCampo", "fieldType":"TEXT"}
             ],
             "selectFields":"*",
             "selectFrom":"departments",
@@ -12,7 +13,7 @@
                     "type":"get", 
                     "name":"getByGuid",
                     "extendedUrl": "/:guid",
-                    "apiReturnFields": ["id","guid","name"],
+                    "apiReturnFields": ["id","guid","name","altroCampo"],
                     "dbProviderMethodName":"getByGuid",
                     "whereString": "guid=? AND id IS NOT NULL AND isDeleted=0",
                     "whereParams": ["params.guid"]
@@ -36,7 +37,7 @@
                 {
                     "type":"list", 
                     "name":"listAll",
-                    "apiReturnFields": ["id","guid","name","isDeleted"],
+                    "apiReturnFields": ["id","guid","name","altroCampo","isDeleted"],
                     "dbProviderMethodName":"listAll",
                     "whereString": "",
                     "whereParams": []                    
@@ -45,8 +46,8 @@
                     "type":"save", 
                     "name":"save",
                     "dbProviderMethodName":"save",
-                    "updateFields": ["name"],
-                    "insertFields": ["name"]
+                    "updateFields": ["name","altroCampo"],
+                    "insertFields": ["name","altroCampo"]
                 },      
                 {
                     "type":"delete", 
