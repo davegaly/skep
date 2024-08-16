@@ -1,7 +1,11 @@
 // ##apiName##
 ##tableName##Router.post('/##apiName##', authBusiness.authCheckCredentials, async (ctx, next) => {
   if (##tableName##Business.##apiName##AdjustInputCtx !== undefined) {
-    await ##tableName##Business.##apiName##AdjustInputCtx(ctx);
+    let adjustResult = await ##tableName##Business.##apiName##AdjustInputCtx(ctx);
+    if (adjustResult.isClientInputValid == false) {
+      ctx.body = ApiManager.BuildAPIResponse(true, null, null, adjustResult);
+      return;
+    }    
   }
   let params = {##listParamsBodySave##};
   logger.log("##tableName##API->##apiName##(" + JSON.stringify(params) + ") Started");

@@ -80,7 +80,11 @@ departmentsRouter.get('/listAll', authBusiness.authCheckCredentials, async (ctx,
 // save
 departmentsRouter.post('/save', authBusiness.authCheckCredentials, async (ctx, next) => {
   if (departmentsBusiness.saveAdjustInputCtx !== undefined) {
-    await departmentsBusiness.saveAdjustInputCtx(ctx);
+    let adjustResult = await departmentsBusiness.saveAdjustInputCtx(ctx);
+    if (adjustResult.isClientInputValid == false) {
+      ctx.body = ApiManager.BuildAPIResponse(true, null, null, adjustResult);
+      return;
+    }    
   }
   let params = {id: ctx.request.body.id, name: ctx.request.body.name, altroCampo: ctx.request.body.altroCampo};
   logger.log("departmentsAPI->save(" + JSON.stringify(params) + ") Started");

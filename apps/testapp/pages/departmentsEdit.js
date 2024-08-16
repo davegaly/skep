@@ -32,6 +32,16 @@ async function saveDepartment() {
     objectToPost.name = document.getElementById('txtName').value;
     objectToPost.altroCampo = document.getElementById('txtAltroCampo').value;
     const apiResult = await skepUICallAPIAndWait('../api/departments/save/', objectToPost);
+
+    // check response
+    if (apiResult.clientValidationData != null && apiResult.clientValidationData.isClientInputValid == false) {
+        console.log("INVALID");
+        return;
+    }
+    else
+    {
+        btnGoBackOnClick();
+    }
 }
 
 // saves
