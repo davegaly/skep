@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (querystringParamGuid != null) {
         loadDepartment();
     }
+
+    // loads departments dd
+    skepUIDropdownlistDataBindFromAPI("ddlDepartment");
 });
 
 // loads an existing item from the server using its guid

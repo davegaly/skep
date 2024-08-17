@@ -92,3 +92,20 @@ function skepUITableDataBind(tableId, datasource) {
     });
 
 }
+
+// load a dropdownlist (usually called on document ready)
+async function skepUIDropdownlistDataBindFromAPI(ddlId) {
+    selectElement = document.getElementById(ddlId);
+    console.log(selectElement, ddlId);
+    if (selectElement == null) return;
+    apiURL = selectElement.getAttribute('data-api-url');;
+    const apiResult = await skepUICallAPIAndWait('../api/' + apiURL);
+    if (apiResult.success) {
+        apiResult.data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;  // Use appropriate property for the value
+            option.textContent = item.name;  // Use appropriate property for the text
+            selectElement.appendChild(option);
+        });
+    }
+}

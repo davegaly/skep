@@ -16,6 +16,7 @@ class PagesContentManager {
       else if (currentLineContent.startsWith('txt')) { htmlContent += this.RenderTextbox(currentLineContent); }
       else if (currentLineContent.startsWith('btn')) { htmlContent += this.RenderButton(currentLineContent); }
       else if (currentLineContent.startsWith('tbl')) { htmlContent += this.RenderTable(currentLineContent); }
+      else if (currentLineContent.startsWith('ddl')) { htmlContent += this.RenderDropDownList(currentLineContent); }
       else { htmlContent += currentLineContent; }
 
     });
@@ -40,6 +41,21 @@ class PagesContentManager {
     return lbl + txt + validationDiv;
   }  
 
+  RenderDropDownList(currentLineContent) {
+    // ddl-user-labelText
+    const label = currentLineContent.split('-')[2];
+    const id = currentLineContent.split('-')[1];
+    const dataJson = currentLineContent.split('-')[3];   
+    const data = JSON.parse(dataJson);
+    let lbl = "<label id='lbl" + this.CapitalizeFirstLetter(id) + "'>" + label + "</label>";
+    let ddl = "<select id='ddl" + this.CapitalizeFirstLetter(id) + "' class='form-control' ";
+    ddl += " data-api-url='" + data.apiUrl + "' ";
+    ddl += ">"
+    ddl += "</select>";
+    let validationDiv = this.RenderValidationDiv('ddl' + this.CapitalizeFirstLetter(id));
+    return lbl + ddl + validationDiv;
+  }  
+
   RenderButton(currentLineContent) {
     // btn-save-buttonText
     const buttonText = currentLineContent.split('-')[2];
@@ -55,7 +71,6 @@ class PagesContentManager {
     const fullId = 'tbl' + this.CapitalizeFirstLetter(id);  // tblDepartments
     const dataJson = currentLineContent.split('-')[2];   
     const data = JSON.parse(dataJson);
-    console.log(data);
     let tableHtml = "";
     tableHtml += "<table id='" + fullId + "'>";
     tableHtml += "  <thead>";
