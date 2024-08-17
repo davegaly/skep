@@ -36,7 +36,8 @@ class PagesContentManager {
     const id = currentLineContent.split('-')[1];
     let lbl = "<label id='lbl" + this.CapitalizeFirstLetter(id) + "'>" + label + "</label>";
     let txt = "<input type='text' id='txt" + this.CapitalizeFirstLetter(id) + "' class='form-control' />";
-    return lbl + txt;
+    let validationDiv = this.RenderValidationDiv('txt' + this.CapitalizeFirstLetter(id));
+    return lbl + txt + validationDiv;
   }  
 
   RenderButton(currentLineContent) {
@@ -71,6 +72,11 @@ class PagesContentManager {
     tableHtml += "</table>";
     return tableHtml;
   }   
+
+  // generates a div for validation under the specified control. controlId must be something like "txtName"
+  RenderValidationDiv(controlId) {
+    return "<div id='" + controlId + "ValidationPanel'></div>";
+  }
 
   RenderCloseDiv() {
     return "</div>";

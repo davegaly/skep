@@ -8,11 +8,11 @@ function saveAdjustInputCtx(ctx) {
 
     // checks fields validation
     if (apiManager.CheckInputNotEmpty(ctx.request.body.name) == false) {
-        result = apiManager.BuildClientInputInvalidResponse("Department name cannot be empty");
+        result = apiManager.BuildClientInputInvalidResponse("Department name cannot be empty", "txtName");
         return result;
     }
     if (apiManager.CheckInputNotEmpty(ctx.request.body.altroCampo) == false) {
-        result = apiManager.BuildClientInputInvalidResponse("Altro Campo name cannot be empty");
+        result = apiManager.BuildClientInputInvalidResponse("Altro Campo name cannot be empty", "txtAltroCampo");
         return result;
     }
 

@@ -26,6 +26,10 @@ async function loadDepartment() {
 // save a item
 async function saveDepartment() {
     
+    // clears validation
+    skepUISetValidationMessage("txtName", "");
+    skepUISetValidationMessage("txtAltroCampo", "");
+
     let objectToPost = {};
     if (currentDepartment != null) objectToPost.id = currentDepartment.id;
     objectToPost.guid = querystringParamGuid;
@@ -35,7 +39,7 @@ async function saveDepartment() {
 
     // check response
     if (apiResult.clientValidationData != null && apiResult.clientValidationData.isClientInputValid == false) {
-        console.log("INVALID");
+        skepUISetValidationMessage(apiResult.clientValidationData.invalidFieldId, apiResult.clientValidationData.clientValidationError);
         return;
     }
     else

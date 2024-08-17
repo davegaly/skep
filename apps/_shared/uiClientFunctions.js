@@ -38,6 +38,25 @@ function skepUICallAPIAndWait(url, bodyToPost) {
     return skepUICallAPI(url, bodyToPost); // Always return a promise that can be awaited
 }
 
+// shows or clear a validation message
+function skepUISetValidationMessage(mainControlId, validationMessage) {
+    const validationPanel = document.getElementById(mainControlId + "ValidationPanel");
+    if (!validationPanel) return; // if the control doesnt exist, just exit
+    if (validationMessage != null && validationMessage != undefined && validationMessage != "" )
+    {
+        validationPanel.innerHTML = validationMessage;
+        validationPanel.classList.remove("d-none");
+        validationPanel.classList.add("d-block");
+    }
+    else
+    {
+        validationPanel.innerHTML = "";
+        validationPanel.classList.remove("d-block");
+        validationPanel.classList.add("d-none");
+    }
+
+}
+
 // attaches a list of objects (datasource) to a skep <table>
 function skepUITableDataBind(tableId, datasource) {
     // Select the table by its ID

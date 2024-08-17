@@ -17,10 +17,11 @@ class ApiManager {
     result.clientValidationError = null;
     return result;
   }   
-  static BuildClientInputInvalidResponse(clientNotValidMessageUI) {
+  static BuildClientInputInvalidResponse(clientNotValidMessageUI, invalidFieldId) {
     let result = {};
     result.isClientInputValid = false;
     result.clientValidationError = clientNotValidMessageUI;
+    result.invalidFieldId = invalidFieldId;
     return result;
   } 
 
