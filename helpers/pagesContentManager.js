@@ -14,6 +14,7 @@ class PagesContentManager {
       else if (currentLineContent == 'col-12') { htmlContent += this.RenderGridCol(12); }
       else if (currentLineContent == '/') { htmlContent += this.RenderCloseDiv(); }
       else if (currentLineContent.startsWith('txt')) { htmlContent += this.RenderTextbox(currentLineContent); }
+      else if (currentLineContent.startsWith('dtt')) { htmlContent += this.RenderTextboxDateTime(currentLineContent); }
       else if (currentLineContent.startsWith('btn')) { htmlContent += this.RenderButton(currentLineContent); }
       else if (currentLineContent.startsWith('tbl')) { htmlContent += this.RenderTable(currentLineContent); }
       else if (currentLineContent.startsWith('ddl')) { htmlContent += this.RenderDropDownList(currentLineContent); }
@@ -40,6 +41,16 @@ class PagesContentManager {
     let validationDiv = this.RenderValidationDiv('txt' + this.CapitalizeFirstLetter(id));
     return lbl + txt + validationDiv;
   }  
+
+  RenderTextboxDateTime(currentLineContent) {
+    // dtt-dataInizio-Data Inizio
+    const label = currentLineContent.split('-')[2];
+    const id = currentLineContent.split('-')[1];
+    let lbl = "<label id='lbl" + this.CapitalizeFirstLetter(id) + "'>" + label + "</label>";
+    let txt = "<input type='datetime-local' id='dtt" + this.CapitalizeFirstLetter(id) + "' class='form-control' />";
+    let validationDiv = this.RenderValidationDiv('dtt' + this.CapitalizeFirstLetter(id));
+    return lbl + txt + validationDiv;
+  }    
 
   RenderDropDownList(currentLineContent) {
     // ddl-user-labelText

@@ -96,7 +96,6 @@ function skepUITableDataBind(tableId, datasource) {
 // load a dropdownlist (usually called on document ready)
 async function skepUIDropdownlistDataBindFromAPI(ddlId) {
     selectElement = document.getElementById(ddlId);
-    console.log(selectElement, ddlId);
     if (selectElement == null) return;
     apiURL = selectElement.getAttribute('data-api-url');;
     const apiResult = await skepUICallAPIAndWait('../api/' + apiURL);

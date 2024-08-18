@@ -86,7 +86,7 @@ departmentsRouter.post('/save', authBusiness.authCheckCredentials, async (ctx, n
       return;
     }    
   }
-  let params = {id: ctx.request.body.id, name: ctx.request.body.name, altroCampo: ctx.request.body.altroCampo};
+  let params = {id: ctx.request.body.id, name: ctx.request.body.name, altroCampo: ctx.request.body.altroCampo, dataInizio: ctx.request.body.dataInizio};
   logger.log("departmentsAPI->save(" + JSON.stringify(params) + ") Started");
   try {
     const result = await departmentsProvider.save(params);

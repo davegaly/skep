@@ -4,7 +4,8 @@
             "tableName":"departments",
             "fields":[
                 {"fieldName":"name", "fieldType":"TEXT"},
-                {"fieldName":"altroCampo", "fieldType":"TEXT"}
+                {"fieldName":"altroCampo", "fieldType":"TEXT"},
+                {"fieldName":"dataInizio", "fieldType":"DATETIME"}
             ],
             "selectFields":"*",
             "selectFrom":"departments",
@@ -13,7 +14,7 @@
                     "type":"get", 
                     "name":"getByGuid",
                     "extendedUrl": "/:guid",
-                    "apiReturnFields": ["id","guid","name","altroCampo"],
+                    "apiReturnFields": ["id","guid","name","altroCampo","dataInizio"],
                     "dbProviderMethodName":"getByGuid",
                     "whereString": "guid=? AND id IS NOT NULL AND isDeleted=0",
                     "whereParams": ["params.guid"]
@@ -37,7 +38,7 @@
                 {
                     "type":"list", 
                     "name":"listAll",
-                    "apiReturnFields": ["id","guid","name","altroCampo","isDeleted"],
+                    "apiReturnFields": ["id","guid","name","altroCampo","dataInizio","isDeleted"],
                     "dbProviderMethodName":"listAll",
                     "whereString": "",
                     "whereParams": []                    
@@ -46,8 +47,8 @@
                     "type":"save", 
                     "name":"save",
                     "dbProviderMethodName":"save",
-                    "updateFields": ["name","altroCampo"],
-                    "insertFields": ["name","altroCampo"]
+                    "updateFields": ["name","altroCampo","dataInizio"],
+                    "insertFields": ["name","altroCampo","dataInizio"]
                 },      
                 {
                     "type":"delete", 
