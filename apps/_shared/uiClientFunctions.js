@@ -69,6 +69,7 @@ function skepUITableDataBind(tableId, datasource) {
     tbody.innerHTML = ""; // Clear any existing rows
     // Iterate over the datasource (array of objects)
     datasource.forEach(dataItem => {
+        console.log(dataItem);
         // Create a new row
         let rowHtml = "<tr>";
         // Iterate over each <th> element

@@ -83,12 +83,17 @@ class PagesContentManager {
     const dataJson = currentLineContent.split('-')[2];   
     const data = JSON.parse(dataJson);
     let tableHtml = "";
-    tableHtml += "<table id='" + fullId + "'>";
+    tableHtml += "<table id='" + fullId + "' class='table table-bordered'>";
     tableHtml += "  <thead>";
     tableHtml += "    <tr>";
     data.columns.forEach(column => {
-      tableHtml += "      <th data-field='" + column.field + "' data-key='" + column.key + "'>";
-      tableHtml += column.caption;
+      let columnKey = column.key;
+      let columnField = column.key;
+      let columnCaption = column.key;
+      if (column.field != null && column.field != undefined) { columnField = column.field; }
+      if (column.caption != null && column.caption != undefined) { columnCaption = column.caption; }
+      tableHtml += "      <th data-field='" + columnField + "' data-key='" + columnKey + "'>";
+      tableHtml += columnCaption;
       tableHtml += "      </th>";
     });
     tableHtml += "    </tr>";

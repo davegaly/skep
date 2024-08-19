@@ -72,3 +72,11 @@ function btnDeleteOnClick() {
         btnGoBackOnClick();
     });
 }
+
+// update password
+async function btnUpdatePasswordOnClick() {
+    let objectToPost = {};
+    objectToPost.id = currentUser.id;
+    objectToPost.password = document.getElementById('txtPassword').value;
+    const apiResult = await skepUICallAPIAndWait('../api/users/updatePwd/', objectToPost);
+}

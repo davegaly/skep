@@ -72,7 +72,7 @@
                     "type":"get", 
                     "name":"getByGuid",
                     "extendedUrl": "/:guid",
-                    "apiReturnFields": ["id","guid","email","password","displayName"],
+                    "apiReturnFields": ["id","guid","email","displayName"],
                     "dbProviderMethodName":"getByGuid",
                     "whereString": "guid=? AND id IS NOT NULL AND isDeleted=0",
                     "whereParams": ["params.guid"]
@@ -96,7 +96,7 @@
                 {
                     "type":"list", 
                     "name":"listAll",
-                    "apiReturnFields": ["id","guid","email","displayName"],
+                    "apiReturnFields": ["id","guid","email","displayName","password","isDeleted"],
                     "dbProviderMethodName":"listAll",
                     "whereString": "",
                     "whereParams": []                    
@@ -107,7 +107,13 @@
                     "dbProviderMethodName":"save",
                     "updateFields": ["email","displayName"],
                     "insertFields": ["email","displayName"]
-                },      
+                },     
+                {
+                    "type":"save", 
+                    "name":"updatePwd",
+                    "dbProviderMethodName":"updatePwd",
+                    "updateFields": ["password"]
+                },                 
                 {
                     "type":"delete", 
                     "name":"deleteLogic",

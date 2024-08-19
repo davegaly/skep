@@ -59,7 +59,6 @@ async function getByGuid(params) {
 					id: row.id,
 					guid: row.guid,
 					email: row.email,
-					password: row.password,
 					displayName: row.displayName,
 				};
                         resultObject = recordToReturn; // Since it's a single result, we overwrite resultObject
@@ -190,6 +189,8 @@ async function listAll(params) {
 					guid: row.guid,
 					email: row.email,
 					displayName: row.displayName,
+					password: row.password,
+					isDeleted: row.isDeleted,
 				};
                         resultsArray.push(recordToReturn);
                     },
@@ -275,6 +276,67 @@ async function save(params) {
 }
 
 
+// save
+async function updatePwd(params) {
+    logger.log("usersProvider->updatePwd Started: " + JSON.stringify(params));
+    try {
+        const db = await new sqlite3.Database(dbHelper.ReturnDBPath());
+        if (params.id > 0) {
+            // Update existing record
+            await new Promise((resolve, reject) => {
+                db.serialize(() => {
+                    logger.log("usersProvider->updatePwd(update) Started");
+                    db.prepare(`UPDATE users SET password=? WHERE id=?`, [params.password,params.id])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
+                });
+            });
+            logger.log("usersProvider->updatePwd(update) Finished");
+        } else {
+            // Insert new record
+            await new Promise((resolve, reject) => {
+                db.serialize(() => {
+                    logger.log("usersProvider->updatePwd(insert) Started");
+                    const uniqueUUID = uuid.v4();
+                    logger.log("usersProvider->updatePwd Generated guid for new record: " + uniqueUUID);
+                    db.prepare(`INSERT INTO users (,guid,isDeleted) VALUES (,?,?)`, [, uniqueUUID, 0])
+                      .run((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                      })
+                      .finalize((err) => {
+                          if (err) {
+                              logger.error(err.message);
+                              return reject(err);
+                          }
+                          resolve();
+                      });
+                });
+            });
+            logger.log("usersProvider->updatePwd(insert) Finished");
+        }
+        db.close();
+        return "ok";
+    } catch (error) {
+        logger.error("usersProvider->updatePwd error: " + error.message);
+        throw error;
+    }
+}
+
+
 // logic delete
 async function deleteLogic(params) {
     logger.log("usersProvider->deleteLogic Started: " + JSON.stringify(params));
@@ -316,4 +378,4 @@ async function deleteLogic(params) {
 
 
 
-module.exports = { getIdByGuid,getByGuid,listForGrid,listForDropdown,listAll,save,deleteLogic, }
+module.exports = { getIdByGuid,getByGuid,listForGrid,listForDropdown,listAll,save,updatePwd,deleteLogic, }

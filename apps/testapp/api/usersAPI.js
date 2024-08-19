@@ -99,6 +99,28 @@ usersRouter.post('/save', authBusiness.authCheckCredentials, async (ctx, next) =
 });
 
 
+// updatePwd
+usersRouter.post('/updatePwd', authBusiness.authCheckCredentials, async (ctx, next) => {
+  if (usersBusiness.updatePwdAdjustInputCtx !== undefined) {
+    let adjustResult = await usersBusiness.updatePwdAdjustInputCtx(ctx);
+    if (adjustResult.isClientInputValid == false) {
+      ctx.body = ApiManager.BuildAPIResponse(true, null, null, adjustResult);
+      return;
+    }    
+  }
+  let params = {id: ctx.request.body.id, email: ctx.request.body.email, password: ctx.request.body.password, displayName: ctx.request.body.displayName};
+  logger.log("usersAPI->updatePwd(" + JSON.stringify(params) + ") Started");
+  try {
+    const result = await usersProvider.updatePwd(params);
+    ctx.body = ApiManager.BuildAPIResponse(true, result, null);
+  } catch (err) {
+    ctx.body = ApiManager.BuildAPIResponse(false, null, "error during the execution of the api");
+    logger.error("usersAPI->updatePwd failed: " + err.message);
+  }
+  logger.log("usersAPI->updatePwd finished");
+});
+
+
 // deleteLogic
 usersRouter.get('/deleteLogic/:guid', authBusiness.authCheckCredentials, async (ctx, next) => {
   logger.log("usersAPI->deleteLogic(deleteLogic), with params " + JSON.stringify(ctx.params) + " Started");
