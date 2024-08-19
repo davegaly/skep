@@ -57,6 +57,64 @@
                     "extendedUrl": "/:guid"
                 }
             ]     
+        },
+        {
+            "tableName":"users",
+            "fields":[
+                {"fieldName":"email", "fieldType":"TEXT"},
+                {"fieldName":"password", "fieldType":"TEXT"},
+                {"fieldName":"displayName", "fieldType":"TEXT"}
+            ],
+            "selectFields":"*",
+            "selectFrom":"users",
+            "api": [
+                {
+                    "type":"get", 
+                    "name":"getByGuid",
+                    "extendedUrl": "/:guid",
+                    "apiReturnFields": ["id","guid","email","password","displayName"],
+                    "dbProviderMethodName":"getByGuid",
+                    "whereString": "guid=? AND id IS NOT NULL AND isDeleted=0",
+                    "whereParams": ["params.guid"]
+                },
+                {
+                    "type":"list", 
+                    "name":"listForGrid",
+                    "apiReturnFields": ["guid","email","displayName"],
+                    "dbProviderMethodName":"listForGrid",
+                    "whereString": "isDeleted=0",
+                    "whereParams": []
+                },
+                {
+                    "type":"list", 
+                    "name":"listForDropdown",
+                    "apiReturnFields": ["guid","displayName"],
+                    "dbProviderMethodName":"listForDropdown",
+                    "whereString": "isDeleted=0",
+                    "whereParams": []                    
+                },
+                {
+                    "type":"list", 
+                    "name":"listAll",
+                    "apiReturnFields": ["id","guid","email","displayName"],
+                    "dbProviderMethodName":"listAll",
+                    "whereString": "",
+                    "whereParams": []                    
+                },                
+                {
+                    "type":"save", 
+                    "name":"save",
+                    "dbProviderMethodName":"save",
+                    "updateFields": ["email","displayName"],
+                    "insertFields": ["email","displayName"]
+                },      
+                {
+                    "type":"delete", 
+                    "name":"deleteLogic",
+                    "dbProviderMethodName":"deleteLogic",
+                    "extendedUrl": "/:guid"
+                }
+            ]     
         }
     ]
 }
